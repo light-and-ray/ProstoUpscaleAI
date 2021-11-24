@@ -30,7 +30,6 @@ class Window(QMainWindow):
         self.ui.preview1.setSibling(self.ui.preview2Holder.preview)
         self.ui.preview2Holder.preview.setSibling(self.ui.preview1)
 
-
         self.show()
 
 

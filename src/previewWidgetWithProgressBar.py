@@ -9,9 +9,3 @@ class PreviewWidgetWithProgressBar(QWidget):
         self.ui = Ui_PreviewWidgetWithProgressBar()
         self.ui.setupUi(self)
         self.preview = self.ui.preview
-
-    def setSibling(self, sibling):
-        self.ui.graphicsView.setSibling(sibling)
-
-    def updatePicBorder(self):
-        self.ui.graphicsView.updatePicBorder()

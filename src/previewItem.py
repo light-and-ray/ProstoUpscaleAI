@@ -15,15 +15,19 @@ class PreviewItem(QGraphicsPixmapItem):
     def checkBorder(self):
         x = lambda: self.x()
         y = lambda: self.y()
-        if (x() < self.minX):
-            self.setPos(self.minX, y())
-        elif (x() > self.maxX):
-            self.setPos(self.maxX, y())
+        minX = self.width - self.pixmap().width()
+        minY = self.height - self.pixmap().height()
+        maxX = 0
+        maxY = 0
+        if (x() < minX):
+            self.setPos(minX, y())
+        elif (x() > maxX):
+            self.setPos(maxX, y())
 
-        if (y() < self.minY):
-            self.setPos(x(), self.minY)
-        elif (y() > self.maxY):
-            self.setPos(x(), self.maxY)
+        if (y() < minY):
+            self.setPos(x(), minY)
+        elif (y() > maxY):
+            self.setPos(x(), maxY)
 
     MOVE_SCALE = 3
 
@@ -43,15 +47,11 @@ class PreviewItem(QGraphicsPixmapItem):
             delta = QCursor.pos() - self.startPos
             self.startPos = QCursor.pos()
             self.move(delta)
-            self.sibling.move(delta)
-
-        # print(f'mouseMoveEvent: minX = {self.minX}, minY = {self.minY}, x = {x()}',
-        #     f'y = {y()}, maxX = {self.maxX}, maxY = {self.maxY}')
+            if self.sibling is not None:
+                self.sibling.move(delta)
 
     def setBorder(self, width, height):
-        self.minX = 0 - self.pixmap().width() + width
-        self.minY = 0 - self.pixmap().height() + height
-        self.maxX = 0
-        self.maxY = 0
+        self.width = width
+        self.height = height
         self.checkBorder()
 
