@@ -8,11 +8,12 @@ class PreviewItem(QGraphicsPixmapItem):
         super(PreviewItem, self).__init__()
         self.setBorder(0, 0)
         self.sibling = None
+        self.onMove_ = None
 
     def setSibling(self, sibling):
         self.sibling = sibling
 
-    def checkBorder(self):
+    def _checkBorder(self):
         x = lambda: self.x()
         y = lambda: self.y()
         minX = self.width - self.pixmap().width()
@@ -31,27 +32,36 @@ class PreviewItem(QGraphicsPixmapItem):
 
     MOVE_SCALE = 3
 
-    def needMove(self, button):
+    def _needMove(self, button):
         return button in [Qt.LeftButton, Qt.RightButton, Qt.MiddleButton, Qt.Key_Space]
 
-    def move(self, delta):
+    def _move(self, delta):
         self.setPos(self.pos() + delta * self.MOVE_SCALE)
-        self.checkBorder()
+        self._checkBorder()
+        self._onMove()
 
     def mousePressEvent(self, event):
-        if self.needMove(event.button()):
+        if self._needMove(event.button()):
             self.startPos = QCursor.pos()
 
     def mouseMoveEvent(self, event):
-        if self.needMove(event.buttons()):
+        if self._needMove(event.buttons()):
             delta = QCursor.pos() - self.startPos
             self.startPos = QCursor.pos()
-            self.move(delta)
+            self._move(delta)
             if self.sibling is not None:
-                self.sibling.move(delta)
+                self.sibling._move(delta)
 
     def setBorder(self, width, height):
         self.width = width
         self.height = height
-        self.checkBorder()
+        self._checkBorder()
+
+    def setOnMove(self, func):
+        self.onMove_ = func
+
+    def _onMove(self):
+        if self.onMove_ is not None:
+            self.onMove_()
+            self.onMove_ = None
 
