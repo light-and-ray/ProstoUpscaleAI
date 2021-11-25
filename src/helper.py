@@ -1,7 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import os, pathlib, io
+import os, pathlib, threading, io, signal
 from subprocess import Popen, PIPE, STDOUT
 
 def mkdir(path):
@@ -20,18 +20,3 @@ def execCmd(cmd):
 
 def cropImage(pathIn, pathOut, x, y, w, h):
     execCmd(f'convert "{pathIn}" -crop {w}x{h}+{x}+{y} -quality 100 "{pathOut}"')
-
-def dummyUpscaleGenerator(pathIn, pathOut):
-    def generator():
-        realsr = f'{root()}/realsr/realsr-ncnn-vulkan'
-        model = f'{root()}/realsr/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
-        cmd = f'"{realsr}" -t 100 -m "{model}" -i "{pathIn}" -o "{pathOut}"'
-
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=STDOUT)
-        for line in io.TextIOWrapper(p.stdout, encoding='utf-8'):
-            print(f'[dummyUpscale] {line}', end='')
-            if line.endswith('%\n'):
-                yield float(line[:-2])
-        print('dummyUpscale complete')
-
-    return generator

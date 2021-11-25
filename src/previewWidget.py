@@ -2,7 +2,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-from previewItem import PreviewItem
+from previewPicture import PreviewPicture
 import helper
 
 
@@ -23,15 +23,15 @@ class PreviewWidget(QGraphicsView):
         pix = QPixmap(self.imagePath)
         pix = pix.scaledToWidth(pix.width() * self.SCALE, Qt.SmoothTransformation)
 
-        self.pic = PreviewItem()
+        self.picture = PreviewPicture()
         self.updatePicBorder()
-        self.pic.setPixmap(pix)
-        self.pic.setX(-pix.width() // 2)
-        self.pic.setY(-pix.height() // 2)
+        self.picture.setPixmap(pix)
+        self.picture.setX(-pix.width() // 2)
+        self.picture.setY(-pix.height() // 2)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.scene_.addItem(self.pic)
+        self.scene_.addItem(self.picture)
 
         self.upscaled = QGraphicsPixmapItem()
         self.scene_.addItem(self.upscaled)
@@ -41,10 +41,10 @@ class PreviewWidget(QGraphicsView):
 
 
     def setSibling(self, sibling):
-        self.pic.setSibling(sibling.pic)
+        self.picture.setSibling(sibling.picture)
 
     def updatePicBorder(self):
-        self.pic.setBorder(self.width(), self.height())
+        self.picture.setBorder(self.width(), self.height())
 
     def setSceneRectFromSize(self):
         self.scene_.setSceneRect(0, 0, self.width(), self.height())
@@ -58,16 +58,16 @@ class PreviewWidget(QGraphicsView):
         pass
 
     def saveVisable(self, path):
-        x = -self.pic.x() // self.SCALE
-        y = -self.pic.y() // self.SCALE
+        x = -self.picture.x() // self.SCALE
+        y = -self.picture.y() // self.SCALE
         w = self.width() // self.SCALE
         h = self.height() // self.SCALE
         print(x, y, w, h)
 
-        helper.cropImage(self.imagePath, f'{helper.root()}/tmp/preview.jpg', x, y, w, h)
+        helper.cropImage(self.imagePath, path, x, y, w, h)
 
     def showUpscaled(self, path):
         pix = QPixmap(path)
         self.upscaled.setPixmap(pix)
         self.upscaled.show()
-        self.pic.setOnMove(lambda: self.upscaled.hide())
+        self.picture.setOnMove(lambda: self.upscaled.hide())

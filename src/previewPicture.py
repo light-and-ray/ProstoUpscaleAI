@@ -3,9 +3,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 
-class PreviewItem(QGraphicsPixmapItem):
+class PreviewPicture(QGraphicsPixmapItem):
     def __init__(self):
-        super(PreviewItem, self).__init__()
+        super(PreviewPicture, self).__init__()
         self.setBorder(0, 0)
         self.sibling = None
         self.onMove_ = None
