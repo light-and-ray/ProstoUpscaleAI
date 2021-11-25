@@ -18,7 +18,6 @@ class Upscaler():
         self.percents = 0
 
     def run(self, pathIn, pathOut):
-        self.kill()
         self.init()
         self._thread = threading.Thread(target=lambda: self._run(pathIn, pathOut))
         self._thread.start()

@@ -28,3 +28,13 @@ def cropImage(pathIn, pathOut, x, y, w, h):
 
 def currentTime():
     return round(time.time() * 1000)
+
+def filenameByPath(path: str):
+    return path.split('/')[-1]
+
+def fileUrlToPath(url: str):
+    urlPrefix = 'file://'
+    if url.startswith(urlPrefix):
+        return url[len(urlPrefix):]
+    else:
+        return None

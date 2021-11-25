@@ -9,28 +9,22 @@ import helper
 class PreviewWidget(QGraphicsView):
     def __init__(self, parent):
         super(PreviewWidget, self).__init__(parent=parent)
+        self.setAcceptDrops(False)
 
 
     def setup(self, path, scale=4):
-        self.imagePath = path
         self.SCALE = scale
         self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
         self.setMinimumSize(300, 300)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.scene_ = QGraphicsScene(parent=self)
         self.setSceneRectFromSize()
 
-        pix = QPixmap(self.imagePath)
-        pix = pix.scaledToWidth(pix.width() * self.SCALE, Qt.SmoothTransformation)
-
         self.picture = PreviewPicture()
         self.updatePicBorder()
-        self.picture.setPixmap(pix)
-        self.picture.setX(-pix.width() // 2)
-        self.picture.setY(-pix.height() // 2)
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
+        self.setPicture(path)
         self.scene_.addItem(self.picture)
 
         self.upscaled = QGraphicsPixmapItem()
@@ -38,6 +32,18 @@ class PreviewWidget(QGraphicsView):
         self.upscaled.hide()
 
         self.setScene(self.scene_)
+
+
+    def setPicture(self, path):
+        self.imagePath = path
+        pix = QPixmap(self.imagePath)
+        pix = pix.scaledToWidth(pix.width() * self.SCALE, Qt.SmoothTransformation)
+
+        self.picture.setPixmap(pix)
+        self.picture.setX(-pix.width() // 2)
+        self.picture.setY(-pix.height() // 2)
+
+
 
 
     def setSibling(self, sibling):

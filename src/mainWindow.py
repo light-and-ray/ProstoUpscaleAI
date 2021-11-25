@@ -1,4 +1,3 @@
-import time
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -9,18 +8,22 @@ import helper
 
 
 class MainWindow(QMainWindow):
+    TIMEOUT_BEFORE_UPSCALE = 900
+    DEFAULT_PICTURE = 'photo.jpg'
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.initUi()
-        self.ui.convertButton.clicked.connect(self.upscalePreview)
+        self.ui.convertButton.clicked.connect(self._upscalePreview)
         self.upscaler = Upscaler()
         self.hideTimer = QTimer()
         self.backgroundTimer = QTimer()
         self.backgroundTimer.timeout.connect(self._background)
         self.backgroundTimer.start(50)
         self._needUpscalePreview_var = True
+        self.setAcceptDrops(True)
 
 
     def initUi(self):
@@ -35,13 +38,10 @@ class MainWindow(QMainWindow):
         fileMenu = menubar.addMenu('File')
         fileMenu.addAction(exitAction)
 
-        self.setWindowTitle('ProstoUpscaleAi - alpha')
-
-        photo = 'photo.jpg'
         self.preview1 = self.ui.preview1
-        self.preview1.setup(photo)
         self.preview2 = self.ui.preview2Holder.preview
-        self.preview2.setup(photo)
+        self.preview1.setup(self.DEFAULT_PICTURE)
+        self.preview2.setup(self.DEFAULT_PICTURE)
         self.preview1.setSibling(self.preview2)
         self.preview2.setSibling(self.preview1)
 
@@ -51,10 +51,26 @@ class MainWindow(QMainWindow):
         self.previewProgressBar.setValue(0)
         self.previewProgressBar.hide()
 
+        self.addImagesButton = self.ui.addImagesButton
+
         self.show()
 
 
-    def upscalePreview(self):
+    def setPicture(self, path):
+        self._picture = path
+        self.preview1.setPicture(self._picture)
+        self.preview2.setPicture(self._picture)
+        self._needUpscalePreview_var = True
+        self.preview2.upscaled.hide()
+        self.updateTitle(helper.filenameByPath(path))
+
+    def updateTitle(self, text):
+        self.setWindowTitle(f'{text} - ProstoUpscaleAi - alpha')
+
+    def setOnDrop(self, func):
+        self._onDrop = func
+
+    def _upscalePreview(self):
         self._needUpscalePreview_var = False
         self.hideTimer.stop()
         self.previewProgressBar.setValue(0)
@@ -75,33 +91,38 @@ class MainWindow(QMainWindow):
         self.preview1.picture.setOnMoveCallback(onMove)
 
 
-    def onHideProgressBarTimeout(self):
+    def _onHideProgressBarTimeout(self):
         print("onHideTimeout")
         self.previewProgressBar.hide()
         self.upscaler.percents = None
         self.hideTimer.stop()
 
 
-    def onUpscalePreviewComplete(self):
+    def _onUpscalePreviewComplete(self):
         self.preview2.showUpscaled(self.pathAfter)
         print('onUpscalePreviewComplete')
-        self.hideTimer.timeout.connect(self.onHideProgressBarTimeout)
+        self.hideTimer.timeout.connect(self._onHideProgressBarTimeout)
         self.hideTimer.start(1000)
 
     def _needUpscalePreview(self):
         return self._needUpscalePreview_var
 
 
-    TIMEOUT_BEFORE_UPSCALE = 900
-
     def _background(self):
         per = self.upscaler.percents
         if per is not None:
             self.previewProgressBar.setValue(int(100 * per))
         if self.upscaler.complete() == True:
-            self.onUpscalePreviewComplete()
+            self._onUpscalePreviewComplete()
 
         if self._needUpscalePreview():
             timeDiff = helper.currentTime() - self.preview1.picture.lastMove()
             if timeDiff >= self.TIMEOUT_BEFORE_UPSCALE:
-                self.upscalePreview()
+                self._upscalePreview()
+
+    def dragEnterEvent(self, event):
+        event.accept()
+
+    def dropEvent(self, event):
+        self._onDrop(event)
+
