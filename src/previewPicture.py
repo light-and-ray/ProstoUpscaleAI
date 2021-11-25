@@ -2,13 +2,16 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+import helper
+
 
 class PreviewPicture(QGraphicsPixmapItem):
     def __init__(self):
         super(PreviewPicture, self).__init__()
         self.setBorder(0, 0)
         self.sibling = None
-        self.onMove_ = None
+        self._onMoveCallback_var = None
+        self._lastMove = helper.currentTime()
 
     def setSibling(self, sibling):
         self.sibling = sibling
@@ -38,7 +41,8 @@ class PreviewPicture(QGraphicsPixmapItem):
     def _move(self, delta):
         self.setPos(self.pos() + delta * self.MOVE_SCALE)
         self._checkBorder()
-        self._onMove()
+        self._onMoveCallback()
+        self._lastMove = helper.currentTime()
 
     def mousePressEvent(self, event):
         if self._needMove(event.button()):
@@ -57,11 +61,14 @@ class PreviewPicture(QGraphicsPixmapItem):
         self.height = height
         self._checkBorder()
 
-    def setOnMove(self, func):
-        self.onMove_ = func
+    def setOnMoveCallback(self, func):
+        self._onMoveCallback_var = func
 
-    def _onMove(self):
-        if self.onMove_ is not None:
-            self.onMove_()
-            self.onMove_ = None
+    def _onMoveCallback(self):
+        if self._onMoveCallback_var is not None:
+            self._onMoveCallback_var()
+            self._onMoveCallback_var = None
+
+    def lastMove(self):
+        return self._lastMove
 

@@ -1,7 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import os, pathlib, threading, io, signal
+import threading, io
 from subprocess import Popen, PIPE, STDOUT
 
 import helper
@@ -38,9 +38,7 @@ class Upscaler():
         return complete
 
     def _run(self, pathIn, pathOut):
-        realsr = f'{helper.root()}/realsr/realsr-ncnn-vulkan'
-        model = f'{helper.root()}/realsr/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
-        cmd = f'"{realsr}" -t 100 -m "{model}" -i "{pathIn}" -o "{pathOut}"'
+        cmd = f'"{helper.realsr}" -t 100 -m "{helper.modelJpeg}" -i "{pathIn}" -o "{pathOut}"'
 
         with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT) as p:
             self._process = p

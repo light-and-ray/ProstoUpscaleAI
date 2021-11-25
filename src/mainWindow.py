@@ -1,3 +1,4 @@
+import time
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -13,20 +14,14 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.initUi()
-        self.ui.convertButton.clicked.connect(self.renderPreview)
+        self.ui.convertButton.clicked.connect(self.upscalePreview)
         self.upscaler = Upscaler()
         self.hideTimer = QTimer()
         self.backgroundTimer = QTimer()
         self.backgroundTimer.timeout.connect(self._background)
         self.backgroundTimer.start(50)
+        self._needUpscalePreview_var = True
 
-
-    def _background(self):
-        per = self.upscaler.percents
-        if per is not None:
-            self.previewProgressBar.setValue(int(100 * per))
-        if self.upscaler.complete() == True:
-            self.onUpscaleComplete()
 
     def initUi(self):
         exitAction = QAction('&Exit', self)
@@ -59,17 +54,16 @@ class MainWindow(QMainWindow):
         self.show()
 
 
-    def renderPreview(self):
+    def upscalePreview(self):
+        self._needUpscalePreview_var = False
         self.hideTimer.stop()
         self.previewProgressBar.setValue(0)
         self.previewProgressBar.show()
         QApplication.processEvents()
-        savePath = f'{helper.root()}/tmp'
-        helper.mkdir(savePath)
-        self.pathBefore = f'{savePath}/preview.png'
-        self.pathAfter = f'{savePath}/preview-4x.png'
+        helper.mkdir(helper.tmp)
+        self.pathBefore = f'{helper.tmp}/preview.png'
+        self.pathAfter = f'{helper.tmp}/preview-4x.jpg'
         self.preview1.saveVisable(self.pathBefore)
-
 
         self.upscaler.run(self.pathBefore, self.pathAfter)
 
@@ -77,17 +71,37 @@ class MainWindow(QMainWindow):
             self.previewProgressBar.hide()
             self.upscaler.kill()
             self.hideTimer.stop()
-        self.preview1.picture.setOnMove(onMove)
+            self._needUpscalePreview_var = True
+        self.preview1.picture.setOnMoveCallback(onMove)
 
 
-    def onHideTimeout(self):
+    def onHideProgressBarTimeout(self):
         print("onHideTimeout")
         self.previewProgressBar.hide()
         self.upscaler.percents = None
         self.hideTimer.stop()
 
-    def onUpscaleComplete(self):
+
+    def onUpscalePreviewComplete(self):
         self.preview2.showUpscaled(self.pathAfter)
-        print('onUpscaleComplete')
-        self.hideTimer.timeout.connect(self.onHideTimeout)
+        print('onUpscalePreviewComplete')
+        self.hideTimer.timeout.connect(self.onHideProgressBarTimeout)
         self.hideTimer.start(1000)
+
+    def _needUpscalePreview(self):
+        return self._needUpscalePreview_var
+
+
+    TIMEOUT_BEFORE_UPSCALE = 900
+
+    def _background(self):
+        per = self.upscaler.percents
+        if per is not None:
+            self.previewProgressBar.setValue(int(100 * per))
+        if self.upscaler.complete() == True:
+            self.onUpscalePreviewComplete()
+
+        if self._needUpscalePreview():
+            timeDiff = helper.currentTime() - self.preview1.picture.lastMove()
+            if timeDiff >= self.TIMEOUT_BEFORE_UPSCALE:
+                self.upscalePreview()

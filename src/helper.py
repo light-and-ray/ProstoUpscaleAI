@@ -1,15 +1,19 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import os, pathlib, threading, io, signal
+import os, pathlib, time
 from subprocess import Popen, PIPE, STDOUT
 
 def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-def root():
-    return pathlib.Path(__file__).parent.parent.resolve()
+root = pathlib.Path(__file__).parent.parent.resolve()
+tmp = f'{root}/tmp'
+realsr = f'{root}/bin/realsr-ncnn-vulkan'
+modelJpeg = f'{root}/bin/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
+model = f'{root}/bin/realsr-ncnn-vulkan-models/models-DF2K'
+
 
 def execCmd(cmd):
     print(cmd)
@@ -20,3 +24,7 @@ def execCmd(cmd):
 
 def cropImage(pathIn, pathOut, x, y, w, h):
     execCmd(f'convert "{pathIn}" -crop {w}x{h}+{x}+{y} -quality 100 "{pathOut}"')
+
+
+def currentTime():
+    return round(time.time() * 1000)

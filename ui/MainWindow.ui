@@ -181,9 +181,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="addImageButton">
+       <widget class="QPushButton" name="addImagesButton">
         <property name="text">
-         <string>Add Image</string>
+         <string>Add Images</string>
         </property>
        </widget>
       </item>

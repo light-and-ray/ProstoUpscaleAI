@@ -70,4 +70,4 @@ class PreviewWidget(QGraphicsView):
         pix = QPixmap(path)
         self.upscaled.setPixmap(pix)
         self.upscaled.show()
-        self.picture.setOnMove(lambda: self.upscaled.hide())
+        self.picture.setOnMoveCallback(lambda: self.upscaled.hide())
