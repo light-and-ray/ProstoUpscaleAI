@@ -9,7 +9,7 @@ import helper
 
 class MainWindow(QMainWindow):
     TIMEOUT_BEFORE_UPSCALE = 900
-    DEFAULT_PICTURE = 'photo.jpg'
+    DEFAULT_PICTURE = 'photo_1000.jpg'
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -88,6 +88,8 @@ class MainWindow(QMainWindow):
             self.upscaler.kill()
             self.hideTimer.stop()
             self._needUpscalePreview_var = True
+            self.preview2.hideBlackout()
+
         self.preview1.picture.setOnMoveCallback(onMove)
 
 
@@ -103,6 +105,8 @@ class MainWindow(QMainWindow):
         print('onUpscalePreviewComplete')
         self.hideTimer.timeout.connect(self._onHideProgressBarTimeout)
         self.hideTimer.start(1000)
+        # self._onHideProgressBarTimeout()
+        self.preview2.hideBlackout()
 
     def _needUpscalePreview(self):
         return self._needUpscalePreview_var
@@ -112,7 +116,15 @@ class MainWindow(QMainWindow):
         per = self.upscaler.percents
         if per is not None:
             self.previewProgressBar.setValue(int(100 * per))
-        if self.upscaler.complete() == True:
+
+        if self.upscaler.showBlackout is not None:
+            if self.upscaler.showBlackout:
+                self.preview2.showBlackout()
+            else:
+                self.preview2.hideBlackout()
+            self.upscaler.showBlackout = None
+
+        if self.upscaler.complete():
             self._onUpscalePreviewComplete()
 
         if self._needUpscalePreview():

@@ -16,6 +16,7 @@ class Upscaler():
         self._process = None
         self._done = False
         self.percents = 0
+        self.showBlackout = None
 
     def run(self, pathIn, pathOut):
         self.init()
@@ -37,6 +38,8 @@ class Upscaler():
         return complete
 
     def _run(self, pathIn, pathOut):
+        self.percents = 0.00
+        self.showBlackout = True
         cmd = f'"{helper.realsr}" -t 100 -m "{helper.modelJpeg}" -i "{pathIn}" -o "{pathOut}"'
 
         with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT) as p:
@@ -49,3 +52,4 @@ class Upscaler():
         print(f'dummyUpscale complete')
         self.percents = 100.00
         self._complete = True
+        self.showBlackout = False

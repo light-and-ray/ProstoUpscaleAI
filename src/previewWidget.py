@@ -7,6 +7,8 @@ import helper
 
 
 class PreviewWidget(QGraphicsView):
+    BLACKOUT_OPACITY = 0.6
+
     def __init__(self, parent):
         super(PreviewWidget, self).__init__(parent=parent)
         self.setAcceptDrops(False)
@@ -31,6 +33,11 @@ class PreviewWidget(QGraphicsView):
         self.scene_.addItem(self.upscaled)
         self.upscaled.hide()
 
+        self.blackout = QGraphicsPixmapItem()
+        self.scene_.addItem(self.blackout)
+        self.blackout.setOpacity(self.BLACKOUT_OPACITY)
+        self.blackout.hide()
+
         self.setScene(self.scene_)
 
 
@@ -42,8 +49,6 @@ class PreviewWidget(QGraphicsView):
         self.picture.setPixmap(pix)
         self.picture.setX(-pix.width() // 2)
         self.picture.setY(-pix.height() // 2)
-
-
 
 
     def setSibling(self, sibling):
@@ -77,3 +82,15 @@ class PreviewWidget(QGraphicsView):
         self.upscaled.setPixmap(pix)
         self.upscaled.show()
         self.picture.setOnMoveCallback(lambda: self.upscaled.hide())
+
+    def showBlackout(self):
+        pix = QPixmap(self.width(), self.height())
+        painter = QPainter()
+        painter.begin(pix)
+        painter.fillRect(0, 0, self.width(), self.height(), QColor(0, 0, 0))
+        painter.end()
+        self.blackout.setPixmap(pix)
+        self.blackout.show()
+
+    def hideBlackout(self):
+        self.blackout.hide()
