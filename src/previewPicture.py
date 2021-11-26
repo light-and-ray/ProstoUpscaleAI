@@ -12,7 +12,7 @@ class PreviewPicture(QGraphicsPixmapItem):
         self.setSize(0, 0)
         self._sibling = None
         self._onMoveCallback = None
-        self._lastMove = helper.currentTime()
+        self.updateLastMove()
 
 
     def setSibling(self, sibling):
@@ -28,9 +28,11 @@ class PreviewPicture(QGraphicsPixmapItem):
     def setOnMoveCallback(self, func):
         self._onMoveCallback = func
 
-
     def getLastMove(self):
         return self._lastMove
+
+    def updateLastMove(self):
+        self._lastMove = helper.currentTime()
 
 #private:
 
@@ -58,7 +60,7 @@ class PreviewPicture(QGraphicsPixmapItem):
         self.setPos(self.pos() + delta * config.MOVE_SCALE)
         self._checkBorder()
         self._CallOnMoveCallback()
-        self._lastMove = helper.currentTime()
+        self.updateLastMove()
 
     def mousePressEvent(self, event):
         if self._isGoodButton(event.button()):

@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 import threading, io
 from subprocess import Popen, PIPE, STDOUT
 
-import helper
+import helper, config
 
 class Upscaler():
 #public:
@@ -45,7 +45,7 @@ class Upscaler():
     def _run(self, pathIn, pathOut):
         self.percents = 0.00
         self.showBlackout = True
-        cmd = f'"{helper.realsr}" -t 100 -m "{helper.modelJpeg}" -i "{pathIn}" -o "{pathOut}"'
+        cmd = f'"{config.realsr}" -t 100 -m "{config.modelJpeg}" -i "{pathIn}" -o "{pathOut}"'
         print(cmd)
 
         with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT) as p:

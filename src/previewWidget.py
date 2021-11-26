@@ -48,6 +48,7 @@ class PreviewWidget(QGraphicsView):
         self.picture.setPixmap(pix)
         self.picture.setX(-pix.width() // 2)
         self.picture.setY(-pix.height() // 2)
+        self.picture.updateLastMove()
 
 
     def setSibling(self, sibling):

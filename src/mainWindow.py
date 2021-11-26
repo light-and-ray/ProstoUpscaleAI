@@ -78,9 +78,9 @@ class MainWindow(QMainWindow):
         self.previewProgressBar.setValue(0)
         self.previewProgressBar.show()
         QApplication.processEvents()
-        helper.mkdir(helper.tmp)
-        self.savePath = f'{helper.tmp}/preview.png'
-        self.upscaledPath = f'{helper.tmp}/preview-4x.jpg'
+        helper.mkdir(config.tmp)
+        self.savePath = f'{config.tmp}/preview.png'
+        self.upscaledPath = f'{config.tmp}/preview-4x.jpg'
         self.preview1.save(self.savePath)
 
         self._upscaler.run(self.savePath, self.upscaledPath)
@@ -138,4 +138,8 @@ class MainWindow(QMainWindow):
 
     def dropEvent(self, event):
         self._onDrop(event)
+
+    def closeEvent(self, event: QCloseEvent):
+        self._upscaler.kill()
+        event.accept()
 

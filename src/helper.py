@@ -1,7 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import os, pathlib, time
+import os, time
 from subprocess import Popen, PIPE, STDOUT
 
 import config
@@ -9,12 +9,6 @@ import config
 def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
-
-root = pathlib.Path(__file__).parent.parent.resolve()
-tmp = f'{root}/tmp'
-realsr = f'{root}/bin/realsr-ncnn-vulkan'
-modelJpeg = f'{root}/bin/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
-model = f'{root}/bin/realsr-ncnn-vulkan-models/models-DF2K'
 
 
 def execCmd(cmd):
