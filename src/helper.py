@@ -4,6 +4,8 @@ from PyQt5.QtCore import *
 import os, pathlib, time
 from subprocess import Popen, PIPE, STDOUT
 
+import config
+
 def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
@@ -23,7 +25,7 @@ def execCmd(cmd):
             print(f'[execCmd] {line}', end='')
 
 def cropImage(pathIn, pathOut, x, y, w, h):
-    execCmd(f'convert "{pathIn}" -crop {w}x{h}+{x}+{y} -quality 100 "{pathOut}"')
+    execCmd(f'{config.convert} "{pathIn}" -crop {w}x{h}+{x}+{y} -quality 100 "{pathOut}"')
 
 
 def currentTime():
@@ -37,4 +39,4 @@ def fileUrlToPath(url: str):
     if url.startswith(urlPrefix):
         return url[len(urlPrefix):]
     else:
-        return None
+        return url

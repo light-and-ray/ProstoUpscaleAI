@@ -3,48 +3,47 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 from previewPicture import PreviewPicture
-import helper
+import helper, config
 
 
 class PreviewWidget(QGraphicsView):
-    BLACKOUT_OPACITY = 0.6
-
+#public:
     def __init__(self, parent):
         super(PreviewWidget, self).__init__(parent=parent)
         self.setAcceptDrops(False)
 
 
-    def setup(self, path, scale=4):
-        self.SCALE = scale
+    def setup(self, path, zoom=4):
+        self._zoom = zoom
         self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
         self.setMinimumSize(300, 300)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        self.scene_ = QGraphicsScene(parent=self)
-        self.setSceneRectFromSize()
+        self._scene = QGraphicsScene(parent=self)
+        self._setSceneRectFromSize()
 
         self.picture = PreviewPicture()
-        self.updatePicBorder()
+        self._updatePicBorder()
         self.setPicture(path)
-        self.scene_.addItem(self.picture)
+        self._scene.addItem(self.picture)
 
         self.upscaled = QGraphicsPixmapItem()
-        self.scene_.addItem(self.upscaled)
+        self._scene.addItem(self.upscaled)
         self.upscaled.hide()
 
         self.blackout = QGraphicsPixmapItem()
-        self.scene_.addItem(self.blackout)
-        self.blackout.setOpacity(self.BLACKOUT_OPACITY)
+        self._scene.addItem(self.blackout)
+        self.blackout.setOpacity(config.BLACKOUT_OPACITY)
         self.blackout.hide()
 
-        self.setScene(self.scene_)
+        self.setScene(self._scene)
 
 
     def setPicture(self, path):
         self.imagePath = path
         pix = QPixmap(self.imagePath)
-        pix = pix.scaledToWidth(pix.width() * self.SCALE, Qt.SmoothTransformation)
+        pix = pix.scaledToWidth(pix.width() * self._zoom, Qt.SmoothTransformation)
 
         self.picture.setPixmap(pix)
         self.picture.setX(-pix.width() // 2)
@@ -54,28 +53,16 @@ class PreviewWidget(QGraphicsView):
     def setSibling(self, sibling):
         self.picture.setSibling(sibling.picture)
 
-    def updatePicBorder(self):
-        self.picture.setBorder(self.width(), self.height())
 
-    def setSceneRectFromSize(self):
-        self.scene_.setSceneRect(0, 0, self.width(), self.height())
-
-    def resizeEvent(self, event):
-        self.setSceneRectFromSize()
-        self.updatePicBorder()
-        return super(PreviewWidget, self).resizeEvent(event)
-
-    def wheelEvent(self, event):
-        pass
-
-    def saveVisable(self, path):
-        x = -self.picture.x() // self.SCALE
-        y = -self.picture.y() // self.SCALE
-        w = self.width() // self.SCALE
-        h = self.height() // self.SCALE
+    def save(self, path):
+        x = -self.picture.x() // self._zoom
+        y = -self.picture.y() // self._zoom
+        w = self.width() // self._zoom
+        h = self.height() // self._zoom
         print(x, y, w, h)
 
         helper.cropImage(self.imagePath, path, x, y, w, h)
+
 
     def showUpscaled(self, path):
         pix = QPixmap(path)
@@ -94,3 +81,20 @@ class PreviewWidget(QGraphicsView):
 
     def hideBlackout(self):
         self.blackout.hide()
+
+#private:
+
+    def _updatePicBorder(self):
+        self.picture.setSize(self.width(), self.height())
+
+    def _setSceneRectFromSize(self):
+        self._scene.setSceneRect(0, 0, self.width(), self.height())
+
+    def resizeEvent(self, event):
+        self._setSceneRectFromSize()
+        self._updatePicBorder()
+        return super(PreviewWidget, self).resizeEvent(event)
+
+    def wheelEvent(self, event):
+        pass
+

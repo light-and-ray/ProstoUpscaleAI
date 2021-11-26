@@ -4,25 +4,25 @@ from PyQt5.QtCore import *
 import os
 
 from mainWindow import MainWindow
-import helper
+import helper, config
 
 
 
 class ImagesManager:
-
-    DEFAULT_DIRECTORY = os.environ['HOME']
-
+#public:
     def __init__(self, mainWindow : MainWindow):
         self._mainWindow = mainWindow
         self._mainWindow.addImagesButton.clicked.connect(self.addImages)
         self._mainWindow.setOnDrop(self._onDrop)
-        self._lastDirectory = self.DEFAULT_DIRECTORY
+        self._lastDirectory = config.defaultOpenDirectory
 
 
     def addImages(self):
         path = self._selectImage()
         if path != '':
             self._mainWindow.setPicture(path)
+
+#private:
 
     def _selectImage(self):
         print(self._lastDirectory)

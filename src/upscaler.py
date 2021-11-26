@@ -7,9 +7,9 @@ from subprocess import Popen, PIPE, STDOUT
 import helper
 
 class Upscaler():
+#public:
     def __init__(self):
         self.init()
-
 
     def init(self):
         self._complete = False
@@ -18,10 +18,12 @@ class Upscaler():
         self.percents = 0
         self.showBlackout = None
 
+
     def run(self, pathIn, pathOut):
         self.init()
         self._thread = threading.Thread(target=lambda: self._run(pathIn, pathOut))
         self._thread.start()
+
 
     def kill(self):
         if not self._done and self._process is not None:
@@ -31,16 +33,20 @@ class Upscaler():
             self._thread.join()
             print('killed')
 
+
     def complete(self):
         complete = self._complete and not self._done
         if complete:
             self._done = True
         return complete
 
+#private:
+
     def _run(self, pathIn, pathOut):
         self.percents = 0.00
         self.showBlackout = True
         cmd = f'"{helper.realsr}" -t 100 -m "{helper.modelJpeg}" -i "{pathIn}" -o "{pathOut}"'
+        print(cmd)
 
         with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT) as p:
             self._process = p
@@ -49,7 +55,6 @@ class Upscaler():
                 if line.endswith('%\n'):
                     self.percents = float(line[:-2])
 
-        print(f'dummyUpscale complete')
         self.percents = 100.00
         self._complete = True
         self.showBlackout = False

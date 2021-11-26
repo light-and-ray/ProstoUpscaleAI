@@ -2,19 +2,37 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-import helper
+import helper, config
 
 
 class PreviewPicture(QGraphicsPixmapItem):
+#public:
     def __init__(self):
         super(PreviewPicture, self).__init__()
-        self.setBorder(0, 0)
-        self.sibling = None
-        self._onMoveCallback_var = None
+        self.setSize(0, 0)
+        self._sibling = None
+        self._onMoveCallback = None
         self._lastMove = helper.currentTime()
 
+
     def setSibling(self, sibling):
-        self.sibling = sibling
+        self._sibling = sibling
+
+
+    def setSize(self, width, height):
+        self.width = width
+        self.height = height
+        self._checkBorder()
+
+
+    def setOnMoveCallback(self, func):
+        self._onMoveCallback = func
+
+
+    def getLastMove(self):
+        return self._lastMove
+
+#private:
 
     def _checkBorder(self):
         x = lambda: self.x()
@@ -33,42 +51,29 @@ class PreviewPicture(QGraphicsPixmapItem):
         elif (y() > maxY):
             self.setPos(x(), maxY)
 
-    MOVE_SCALE = 3
-
-    def _needMove(self, button):
-        return button in [Qt.LeftButton, Qt.RightButton, Qt.MiddleButton, Qt.Key_Space]
+    def _isGoodButton(self, button):
+        return button in [Qt.LeftButton, Qt.RightButton, Qt.MiddleButton]
 
     def _move(self, delta):
-        self.setPos(self.pos() + delta * self.MOVE_SCALE)
+        self.setPos(self.pos() + delta * config.MOVE_SCALE)
         self._checkBorder()
-        self._onMoveCallback()
+        self._CallOnMoveCallback()
         self._lastMove = helper.currentTime()
 
     def mousePressEvent(self, event):
-        if self._needMove(event.button()):
+        if self._isGoodButton(event.button()):
             self.startPos = QCursor.pos()
 
     def mouseMoveEvent(self, event):
-        if self._needMove(event.buttons()):
+        if self._isGoodButton(event.buttons()):
             delta = QCursor.pos() - self.startPos
             self.startPos = QCursor.pos()
             self._move(delta)
-            if self.sibling is not None:
-                self.sibling._move(delta)
+            if self._sibling is not None:
+                self._sibling._move(delta)
 
-    def setBorder(self, width, height):
-        self.width = width
-        self.height = height
-        self._checkBorder()
-
-    def setOnMoveCallback(self, func):
-        self._onMoveCallback_var = func
-
-    def _onMoveCallback(self):
-        if self._onMoveCallback_var is not None:
-            self._onMoveCallback_var()
-            self._onMoveCallback_var = None
-
-    def lastMove(self):
-        return self._lastMove
+    def _CallOnMoveCallback(self):
+        if self._onMoveCallback is not None:
+            self._onMoveCallback()
+            self._onMoveCallback = None
 
