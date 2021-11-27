@@ -4,27 +4,24 @@ from PyQt5.QtCore import *
 import os
 
 from mainWindow import MainWindow
+from fileCardsList import FileCardsList
 import helper, config
 
 
 
 class ImagesManager:
 #public:
-    def __init__(self, mainWindow : MainWindow):
+    def __init__(self, mainWindow : MainWindow, fileCardsList: FileCardsList):
         self._mainWindow = mainWindow
-        self._mainWindow.addImagesButton.clicked.connect(self.addImages)
+        self._mainWindow.addImagesButton.clicked.connect(self._openImages)
         self._mainWindow.setOnDrop(self._onDrop)
         self._lastDirectory = config.defaultOpenDirectory
 
-
-    def addImages(self):
-        path = self._selectImage()
-        if path != '':
-            self._mainWindow.setPicture(path)
+        self._fileCardsList = fileCardsList
 
 #private:
 
-    def _selectImage(self):
+    def _selectImageFromDialog(self):
         print(self._lastDirectory)
         anyFilter = 'Any files (*)'
         imageFilter = 'Images (*.jpg *.png *.webp *.jpeg *.gif *.bmp)'
@@ -33,9 +30,28 @@ class ImagesManager:
         self._lastDirectory = os.path.dirname(file)
         return file
 
-    def _onDrop(self, event):
-        print('Droped:', event.mimeData().text())
-        path = helper.fileUrlToPath(event.mimeData().text())
-        print(f'Opening {path}')
-        self._mainWindow.setPicture(path)
 
+    def _addImages(self, paths):
+        firstIndex = None
+        for path in paths:
+            print('add', path)
+            i = self._fileCardsList.add(path)
+            if firstIndex is None:
+                firstIndex = i
+        self._fileCardsList.select(firstIndex)
+        self._mainWindow.scrollToButtom()
+
+
+    def _openImages(self):
+        path = self._selectImageFromDialog()
+        if path == '':
+            return
+        self._addImages([path])
+
+
+    def _onDrop(self, event):
+        paths = helper.fileUrlToPath(event.mimeData().text()).split('\n')
+        paths = filter(lambda x: x != '', map(helper.fileUrlToPath, paths))
+        paths = list(paths)
+        print('Droped', paths)
+        self._addImages(paths)

@@ -90,6 +90,11 @@ class MainWindow(QMainWindow):
         self.scrollLayout.removeWidget(card)
         card.close()
 
+    def scrollToButtom(self):
+        QApplication.processEvents()
+        value = self.ui.scrollArea.verticalScrollBar().maximum()
+        self.ui.scrollArea.verticalScrollBar().setValue(value)
+
 #private:
 
     def _upscalePreview(self):

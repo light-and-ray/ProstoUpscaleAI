@@ -11,7 +11,7 @@ class FileCardsList:
         self._selected = None
 
 
-    def addFileCard(self, imagePath):
+    def add(self, imagePath):
         index = len(self._cards)
         card = FileCard(self._mainWindow.ui.scrollAreaWidgetContents, imagePath, index)
         card.setOnStart(self._onStart)
@@ -21,6 +21,8 @@ class FileCardsList:
         card.setOnSelect(self.select)
         self._cards.append(card)
         self._mainWindow.addCard(card)
+
+        return index
 
 
     def select(self, index, reselect = False):

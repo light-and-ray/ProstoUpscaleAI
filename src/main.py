@@ -14,10 +14,10 @@ def main():
     mainWindow = MainWindow()
 
     fileCardsList = FileCardsList(mainWindow, lambda: None, lambda: None)
-    fileCardsList.addFileCard(config.DEFAULT_PICTURE)
-    fileCardsList.addFileCard('photo2.jpg')
+    fileCardsList.add(config.DEFAULT_PICTURE)
+    fileCardsList.add('photo2.jpg')
 
-    imagesManager = ImagesManager(mainWindow)
+    imagesManager = ImagesManager(mainWindow, fileCardsList)
 
     def background():
         mainWindow._background()

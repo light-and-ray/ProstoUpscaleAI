@@ -25,7 +25,8 @@ class FileCard(QFrame):
         self._index = index
 
         height = self.ui.miniature.height()
-        pix = QPixmap(imagePath).scaledToHeight(height)
+        width = self.ui.miniature.width()
+        pix = QPixmap(imagePath).scaled(width, height, Qt.KeepAspectRatio)
         self.ui.miniature.setPixmap(pix)
 
         self.ui.filenameLabel.setText(helper.filenameByPath(imagePath))
@@ -75,12 +76,12 @@ class FileCard(QFrame):
     def _start(self):
         self.startCancelButton.clicked.connect(self._cancel)
         self.startCancelButton.setIcon(self._cancelIcon)
-        self._onStart()
+        self._onStart(self._index)
 
     def _cancel(self):
         self.startCancelButton.clicked.connect(self._start)
         self.startCancelButton.setIcon(self._startIcon)
-        self._onCancel()
+        self._onCancel(self._index)
 
     def _remove(self):
         self._onRemove(self._index)
