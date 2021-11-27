@@ -4,7 +4,6 @@ from PyQt5.QtCore import *
 
 from Ui_MainWindow import Ui_MainWindow
 from upscaler import Upscaler
-from FileCard import FileCard
 import helper, config
 
 
@@ -18,11 +17,10 @@ class MainWindow(QMainWindow):
 
         self._upscaler = Upscaler()
         self._hideTimer = QTimer()
-        self._backgroundTimer = QTimer()
-        self._backgroundTimer.timeout.connect(self._background)
-        self._backgroundTimer.start(50)
+
         self._needUpscalePreview_var = True
         self.setAcceptDrops(True)
+        self._picture = None
 
 
     def initUi(self):
@@ -39,8 +37,6 @@ class MainWindow(QMainWindow):
 
         self.preview1 = self.ui.preview1
         self.preview2 = self.ui.preview2Holder.preview
-        self.preview1.setup(config.DEFAULT_PICTURE)
-        self.preview2.setup(config.DEFAULT_PICTURE)
         self.preview1.setSibling(self.preview2)
         self.preview2.setSibling(self.preview1)
 
@@ -55,16 +51,6 @@ class MainWindow(QMainWindow):
         self.saveOptionsButton = self.ui.saveOptionsButton
         self.scrollLayout = self.ui.scrollLayout
 
-        self.fileCard1 = FileCard(self.ui.scrollAreaWidgetContents)
-        self.fileCard2 = FileCard(self.ui.scrollAreaWidgetContents)
-        self.fileCard3 = FileCard(self.ui.scrollAreaWidgetContents)
-        self.ui.scrollLayout.addWidget(self.fileCard1)
-        self.ui.scrollLayout.addWidget(self.fileCard2)
-        self.ui.scrollLayout.addWidget(self.fileCard3)
-
-        #process-stop
-        #media-playback-start
-
         self.show()
 
 
@@ -74,14 +60,35 @@ class MainWindow(QMainWindow):
         self.preview2.setPicture(self._picture)
         self._needUpscalePreview_var = True
         self.preview2.upscaled.hide()
-        self.updateTitle(helper.filenameByPath(path))
+        if path is not None:
+            self.updateTitle(helper.filenameByPath(path))
+        else:
+            self.updateTitle(None)
         self._upscaler.kill()
 
+
+    def setXY(self, x, y):
+        self.preview1.picture.setXY(x, y)
+        self.preview2.picture.setXY(x, y)
+
+
     def updateTitle(self, text):
-        self.setWindowTitle(f'{text} - ProstoUpscaleAi - alpha')
+        if text is not None:
+            self.setWindowTitle(f'{text} - ProstoUpscaleAi - alpha')
+        else:
+            self.setWindowTitle(f'ProstoUpscaleAi - alpha')
+
 
     def setOnDrop(self, func):
         self._onDrop = func
+
+
+    def addCard(self, card):
+        self.scrollLayout.addWidget(card)
+
+    def removeCard(self, card):
+        self.scrollLayout.removeWidget(card)
+        card.close()
 
 #private:
 
@@ -123,7 +130,7 @@ class MainWindow(QMainWindow):
         self.preview2.hideBlackout()
 
     def _needUpscalePreview(self):
-        return self._needUpscalePreview_var
+        return self._needUpscalePreview_var and self.preview1.imagePath is not None
 
 
     def _background(self):

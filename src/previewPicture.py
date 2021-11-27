@@ -12,7 +12,7 @@ class PreviewPicture(QGraphicsPixmapItem):
         self.setSize(0, 0)
         self._sibling = None
         self._onMoveCallback = None
-        self.updateLastMove()
+        self._lastXY = None
 
 
     def setSibling(self, sibling):
@@ -31,14 +31,23 @@ class PreviewPicture(QGraphicsPixmapItem):
     def getLastMove(self):
         return self._lastMove
 
+    def getLastXY(self):
+        return self._lastXY
+
     def updateLastMove(self):
         self._lastMove = helper.currentTime()
+        self._lastXY = (self.x(), self.y())
+
+    def setXY(self, x, y):
+        self._lastXY = (x, y)
+        self.setX(x)
+        self.setY(y)
 
 #private:
 
     def _checkBorder(self):
-        x = lambda: self.x()
-        y = lambda: self.y()
+        x = self.x
+        y = self.y
         minX = self.width - self.pixmap().width()
         minY = self.height - self.pixmap().height()
         maxX = 0

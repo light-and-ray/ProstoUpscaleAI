@@ -12,9 +12,7 @@ class PreviewWidget(QGraphicsView):
         super(PreviewWidget, self).__init__(parent=parent)
         self.setAcceptDrops(False)
 
-
-    def setup(self, path, zoom=4):
-        self._zoom = zoom
+        self._zoom = 4
         self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding))
         self.setMinimumSize(300, 300)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -23,9 +21,9 @@ class PreviewWidget(QGraphicsView):
         self._scene = QGraphicsScene(parent=self)
         self._setSceneRectFromSize()
 
+        self.imagePath = None
         self.picture = PreviewPicture()
         self._updatePicBorder()
-        self.setPicture(path)
         self._scene.addItem(self.picture)
 
         self.upscaled = QGraphicsPixmapItem()
@@ -39,16 +37,22 @@ class PreviewWidget(QGraphicsView):
 
         self.setScene(self._scene)
 
+        self.picture.updateLastMove()
+
 
     def setPicture(self, path):
         self.imagePath = path
-        pix = QPixmap(self.imagePath)
-        pix = pix.scaledToWidth(pix.width() * self._zoom, Qt.SmoothTransformation)
+        if path is not None:
+            pix = QPixmap(self.imagePath)
+            pix = pix.scaledToWidth(pix.width() * self._zoom, Qt.SmoothTransformation)
 
-        self.picture.setPixmap(pix)
-        self.picture.setX(-pix.width() // 2)
-        self.picture.setY(-pix.height() // 2)
-        self.picture.updateLastMove()
+            self.picture.setPixmap(pix)
+            self.picture.setX(-pix.width() // 2)
+            self.picture.setY(-pix.height() // 2)
+            self.picture.updateLastMove()
+        else:
+            pix = QPixmap()
+            self.picture.setPixmap(pix)
 
 
     def setSibling(self, sibling):

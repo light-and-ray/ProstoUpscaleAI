@@ -99,7 +99,7 @@
         <property name="baseSize">
          <size>
           <width>0</width>
-          <height>90</height>
+          <height>95</height>
          </size>
         </property>
         <property name="focusPolicy">

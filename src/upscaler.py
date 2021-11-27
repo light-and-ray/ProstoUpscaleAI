@@ -53,7 +53,7 @@ class Upscaler():
         with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT, encoding='utf-8') as p:
             self._process = p
             for line in p.stdout:
-                print(f'[dummyUpscale] {line}', end='')
+                # print(f'[dummyUpscale] {line}', end='')
                 if line.endswith('%\n'):
                     self.percents = float(line[:-2])
 

@@ -40,13 +40,13 @@
      <property name="minimumSize">
       <size>
        <width>600</width>
-       <height>80</height>
+       <height>50</height>
       </size>
      </property>
      <property name="baseSize">
       <size>
        <width>750</width>
-       <height>95</height>
+       <height>50</height>
       </size>
      </property>
      <property name="focusPolicy">
