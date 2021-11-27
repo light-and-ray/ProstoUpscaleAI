@@ -24,10 +24,7 @@ class FileCard(QFrame):
         self._imagePath = imagePath
         self._index = index
 
-        height = self.ui.miniature.height()
-        width = self.ui.miniature.width()
-        pix = QPixmap(imagePath).scaled(width, height, Qt.KeepAspectRatio)
-        self.ui.miniature.setPixmap(pix)
+        self._updateMiniature()
 
         self.ui.filenameLabel.setText(helper.filenameByPath(imagePath))
         self.lastXY = None
@@ -52,8 +49,8 @@ class FileCard(QFrame):
 
 
     def setSelectedColor(self):
-        pal = QPalette()
-        pal.setColor(QPalette.Background, Qt.gray)
+        pal = QPalette(QApplication.palette())
+        pal.setColor(QPalette.Base, pal.color(QPalette.Background))
         self.setPalette(pal)
 
 
@@ -72,6 +69,7 @@ class FileCard(QFrame):
 
     def markComplete(self):
         self._setReadyState()
+
 
 #private:
 
@@ -104,3 +102,13 @@ class FileCard(QFrame):
     def _cancel(self):
         self._setReadyState()
         self._onCancel(self._index)
+
+    def _updateMiniature(self):
+        height = self.ui.miniature.height()
+        width = self.ui.miniature.width()
+        pix = QPixmap(self._imagePath).scaled(width, height, Qt.KeepAspectRatio)
+        self.ui.miniature.setPixmap(pix)
+
+    def resizeEvent(self, event):
+        self._updateMiniature
+        super(FileCard, self).resizeEvent(event)

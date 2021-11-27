@@ -96,7 +96,7 @@
         <property name="minimumSize">
          <size>
           <width>650</width>
-          <height>0</height>
+          <height>80</height>
          </size>
         </property>
         <property name="baseSize">
@@ -147,9 +147,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioButton">
+       <widget class="QRadioButton" name="removeJpegCheckBox">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="text">
-         <string>RadioButton</string>
+         <string>Remove Jpeg artifacts</string>
         </property>
        </widget>
       </item>
@@ -207,6 +212,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="convertAllButton">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Convert all</string>
         </property>
@@ -214,6 +224,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="addImagesButton">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Add Images</string>
         </property>
@@ -221,6 +236,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="saveOptionsButton">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Save options</string>
         </property>

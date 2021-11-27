@@ -9,8 +9,9 @@ defaultOpenDirectory = os.environ['HOME']
 
 root = pathlib.Path(__file__).parent.parent.resolve()
 tmp = f'{root}/tmp'
-realsr = f'{root}/bin/realsr-ncnn-vulkan'
-convert = f'convert'
-modelJpeg = f'{root}/bin/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
-model = f'{root}/bin/realsr-ncnn-vulkan-models/models-DF2K'
+bin = f'{root}/bin'
+realsr = f'{bin}/realsr-ncnn-vulkan'
+convert = f'{bin}/convert'
+modelJpeg = f'{bin}/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
+model = f'{bin}/realsr-ncnn-vulkan-models/models-DF2K'
 
