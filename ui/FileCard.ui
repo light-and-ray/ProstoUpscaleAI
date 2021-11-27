@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>744</width>
-    <height>80</height>
+    <height>90</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -71,7 +71,7 @@
       <property name="rightMargin">
        <number>10</number>
       </property>
-      <item>
+      <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
        <widget class="QLabel" name="miniature">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">

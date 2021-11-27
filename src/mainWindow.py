@@ -24,17 +24,6 @@ class MainWindow(QMainWindow):
 
 
     def initUi(self):
-        exitAction = QAction('&Exit', self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(qApp.quit)
-
-        self.statusBar()
-
-        menubar = self.menuBar()
-        fileMenu = menubar.addMenu('File')
-        fileMenu.addAction(exitAction)
-
         self.preview1 = self.ui.preview1
         self.preview2 = self.ui.preview2Holder.preview
         self.preview1.setSibling(self.preview2)
