@@ -7,6 +7,7 @@ from mainWindow import MainWindow
 from fileCardsList import FileCardsList
 import helper, config
 
+from upscaler import Upscaler
 
 
 class ImagesManager:
@@ -18,6 +19,13 @@ class ImagesManager:
         self._lastDirectory = config.defaultOpenDirectory
 
         self._fileCardsList = fileCardsList
+
+        self._upscaler = Upscaler()
+        self._fileCardsList.setOnStart(self._onStartUpscale)
+        self._fileCardsList.setOnCancel(self._onCancelUpscale)
+        self._mainWindow.addOnCloseCallback(self._upscaler.kill)
+        self._processingCard = None
+
 
 #private:
 
@@ -55,3 +63,30 @@ class ImagesManager:
         paths = list(paths)
         print('Droped', paths)
         self._addImages(paths)
+
+
+    def _onStartUpscale(self, index):
+        print('_onStartUpscale')
+        card = self._fileCardsList.at(index)
+        pathIn = card.getImagePath()
+        self._upscaler.run(pathIn, pathIn + '_upscaled_4x.jpg')
+        self._processingCard = card
+
+
+    def _onCancelUpscale(self, index):
+        print('_onCancelUpscale')
+        self._upscaler.kill()
+        self._processingCard.progressBar.setValue(0)
+        self._processingCard = None
+
+
+    def _background(self):
+        if self._processingCard is not None:
+            per = self._upscaler.percents
+            if per is not None:
+                self._processingCard.progressBar.setValue(int(100*per))
+
+            if self._upscaler.complete():
+                self._processingCard.markComplete()
+                self._processingCard = None
+

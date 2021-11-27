@@ -3,11 +3,11 @@ from fileCard import FileCard
 
 class FileCardsList:
 #public:
-    def __init__(self, mainWindow, onStart, onCancel):
+    def __init__(self, mainWindow):
         self._cards : list[FileCard] = []
         self._mainWindow = mainWindow
-        self._onStart = onStart
-        self._onCancel = onCancel
+        self._onStart = None
+        self._onCancel = None
         self._selected = None
 
 
@@ -61,6 +61,21 @@ class FileCardsList:
             self.select(self._selected, True)
         else:
             self._mainWindow.setPicture(None)
+
+
+    def setOnStart(self, func):
+        self._onStart = func
+
+
+    def setOnCancel(self, func):
+        self._onCancel = func
+
+
+    def getSelectedCard(self) -> FileCard:
+        return self._cards[self._selected]
+
+    def at(self, index) -> FileCard:
+        return self._cards[index]
 
 
 #private:

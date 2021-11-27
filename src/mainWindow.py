@@ -22,6 +22,9 @@ class MainWindow(QMainWindow):
         self.setAcceptDrops(True)
         self._picture = None
 
+        self._onCloseCallbacks = []
+        self.addOnCloseCallback(self._upscaler.kill)
+
 
     def initUi(self):
         self.preview1 = self.ui.preview1
@@ -79,10 +82,16 @@ class MainWindow(QMainWindow):
         self.scrollLayout.removeWidget(card)
         card.close()
 
+
     def scrollToButtom(self):
         QApplication.processEvents()
         value = self.ui.scrollArea.verticalScrollBar().maximum()
         self.ui.scrollArea.verticalScrollBar().setValue(value)
+
+
+    def addOnCloseCallback(self, func):
+        self._onCloseCallbacks.append(func)
+
 
 #private:
 
@@ -154,6 +163,7 @@ class MainWindow(QMainWindow):
         self._onDrop(event)
 
     def closeEvent(self, event: QCloseEvent):
-        self._upscaler.kill()
+        for onClose in self._onCloseCallbacks:
+            onClose()
         event.accept()
 

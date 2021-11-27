@@ -13,15 +13,20 @@ def main():
     application = QApplication([])
     mainWindow = MainWindow()
 
-    fileCardsList = FileCardsList(mainWindow, lambda: None, lambda: None)
+
+    fileCardsList = FileCardsList(mainWindow)
+    imagesManager = ImagesManager(mainWindow, fileCardsList)
+
+
     fileCardsList.add(config.DEFAULT_PICTURE)
     fileCardsList.add('photo2.jpg')
 
-    imagesManager = ImagesManager(mainWindow, fileCardsList)
 
     def background():
         mainWindow._background()
         fileCardsList._background()
+        imagesManager._background()
+
 
     backgroundTimer = QTimer()
     backgroundTimer.timeout.connect(background)

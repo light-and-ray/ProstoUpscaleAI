@@ -30,8 +30,12 @@ class FileCard(QFrame):
         self.ui.miniature.setPixmap(pix)
 
         self.ui.filenameLabel.setText(helper.filenameByPath(imagePath))
-
         self.lastXY = None
+
+        self.progressBar = self.ui.progressBar
+        self.progressBar.setMaximum(100*100)
+        self.progressBar.setMinimum(0)
+        self.progressBar.setValue(0)
 
 
     def setOnSelect(self, func):
@@ -65,6 +69,10 @@ class FileCard(QFrame):
     def setIndex(self, index):
         self._index = index
 
+
+    def markComplete(self):
+        self._setReadyState()
+
 #private:
 
     _startIcon = QIcon.fromTheme('media-playback-start')
@@ -73,15 +81,26 @@ class FileCard(QFrame):
     def mousePressEvent(self, event):
         self._onSelect(self._index)
 
-    def _start(self):
+    def _remove(self):
+        self._onRemove(self._index)
+
+
+    def _setProcessingState(self):
+        self.startCancelButton.clicked.disconnect()
         self.startCancelButton.clicked.connect(self._cancel)
         self.startCancelButton.setIcon(self._cancelIcon)
+        self.removeButton.hide()
+
+    def _setReadyState(self):
+        self.startCancelButton.clicked.disconnect()
+        self.startCancelButton.clicked.connect(self._start)
+        self.startCancelButton.setIcon(self._startIcon)
+        self.removeButton.show()
+
+    def _start(self):
+        self._setProcessingState()
         self._onStart(self._index)
 
     def _cancel(self):
-        self.startCancelButton.clicked.connect(self._start)
-        self.startCancelButton.setIcon(self._startIcon)
+        self._setReadyState()
         self._onCancel(self._index)
-
-    def _remove(self):
-        self._onRemove(self._index)
