@@ -6,17 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>880</width>
-    <height>608</height>
+    <width>966</width>
+    <height>602</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="acceptDrops">
+    <bool>true</bool>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="4,1">
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout_3" stretch="6,2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item>
        <widget class="QFrame" name="frame">
         <property name="sizePolicy">
@@ -40,6 +49,12 @@
              <height>200</height>
             </size>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -56,6 +71,12 @@
              <height>200</height>
             </size>
            </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -64,10 +85,25 @@
       <item>
        <widget class="QScrollArea" name="scrollArea">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>650</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>90</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="widgetResizable">
          <bool>true</bool>
@@ -77,31 +113,17 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>681</width>
-           <height>105</height>
+           <width>750</width>
+           <height>133</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton_3">
-            <property name="text">
-             <string>PushButton</string>
+           <layout class="QVBoxLayout" name="scrollLayout">
+            <property name="rightMargin">
+             <number>0</number>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_2">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -181,6 +203,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="convertAllButton">
+        <property name="text">
+         <string>Convert all</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="addImagesButton">
         <property name="text">
          <string>Add Images</string>
@@ -188,9 +217,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="convertButton">
+       <widget class="QPushButton" name="saveOptionsButton">
         <property name="text">
-         <string>Convert</string>
+         <string>Save options</string>
         </property>
        </widget>
       </item>
@@ -203,7 +232,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>880</width>
+     <width>966</width>
      <height>22</height>
     </rect>
    </property>

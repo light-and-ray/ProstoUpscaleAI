@@ -30,7 +30,11 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="PreviewWidget" name="preview"/>
+    <widget class="PreviewWidget" name="preview">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0" alignment="Qt::AlignRight|Qt::AlignBottom">
     <widget class="QProgressBar" name="progressBar">

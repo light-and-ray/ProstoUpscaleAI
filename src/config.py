@@ -1,7 +1,7 @@
 import os, pathlib, time
 
 TIMEOUT_BEFORE_UPSCALE = 900
-DEFAULT_PICTURE = 'photo_1000.jpg'
+DEFAULT_PICTURE = 'photo.jpg'
 BLACKOUT_OPACITY = 0.6
 MOVE_SCALE = 3
 

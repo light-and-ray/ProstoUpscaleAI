@@ -29,7 +29,9 @@ class Upscaler():
         if not self._done and self._process is not None:
             print('killing')
             self._done = True
-            self._process.kill()
+            self._process.terminate()
+            # self._process.kill()
+            self._process = None
             self._thread.join()
             print('killed')
 
@@ -48,9 +50,9 @@ class Upscaler():
         cmd = f'"{config.realsr}" -t 100 -m "{config.modelJpeg}" -i "{pathIn}" -o "{pathOut}"'
         print(cmd)
 
-        with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT) as p:
+        with Popen('exec ' + cmd, shell=True, stdout=PIPE, stderr=STDOUT, encoding='utf-8') as p:
             self._process = p
-            for line in io.TextIOWrapper(p.stdout, encoding='utf-8'):
+            for line in p.stdout:
                 print(f'[dummyUpscale] {line}', end='')
                 if line.endswith('%\n'):
                     self.percents = float(line[:-2])

@@ -4,6 +4,7 @@ from PyQt5.QtCore import *
 
 from Ui_MainWindow import Ui_MainWindow
 from upscaler import Upscaler
+from FileCard import FileCard
 import helper, config
 
 
@@ -50,7 +51,19 @@ class MainWindow(QMainWindow):
         self.previewProgressBar.hide()
 
         self.addImagesButton = self.ui.addImagesButton
-        self.convertButton = self.ui.convertButton
+        self.convertAllButton = self.ui.convertAllButton
+        self.saveOptionsButton = self.ui.saveOptionsButton
+        self.scrollLayout = self.ui.scrollLayout
+
+        self.fileCard1 = FileCard(self.ui.scrollAreaWidgetContents)
+        self.fileCard2 = FileCard(self.ui.scrollAreaWidgetContents)
+        self.fileCard3 = FileCard(self.ui.scrollAreaWidgetContents)
+        self.ui.scrollLayout.addWidget(self.fileCard1)
+        self.ui.scrollLayout.addWidget(self.fileCard2)
+        self.ui.scrollLayout.addWidget(self.fileCard3)
+
+        #process-stop
+        #media-playback-start
 
         self.show()
 
