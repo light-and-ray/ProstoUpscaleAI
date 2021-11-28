@@ -34,3 +34,15 @@ def fileUrlToPath(url: str):
         return url[len(urlPrefix):]
     else:
         return url
+
+def listDirImages(path: str):
+    res = []
+    exts = ['jpg', 'jpeg', 'webp', 'png']
+    files = os.listdir(path)
+    for file in files:
+        for ext in exts:
+            if file.endswith(f'.{ext}')\
+                and not file.endswith(f'4x.{ext}'):
+                res.append(f'{path}/{file}')
+    return res
+

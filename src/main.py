@@ -6,7 +6,7 @@ import sys
 from fileCardsList import FileCardsList
 from mainWindow import MainWindow
 from imagesManager import ImagesManager
-import config
+import helper, config
 
 
 def main():
@@ -18,8 +18,8 @@ def main():
     imagesManager = ImagesManager(mainWindow, fileCardsList)
 
 
-    fileCardsList.add(config.DEFAULT_PICTURE)
-    fileCardsList.add('photo2.jpg')
+    for image in helper.listDirImages(f'{config.root}/src/testImages'):
+        fileCardsList.add(image)
 
 
     def background():
