@@ -25,7 +25,6 @@ class MainWindow(QMainWindow):
         self._onCloseCallbacks = []
         self.addOnCloseCallback(self._upscaler.kill)
 
-        self.expandListButton.clicked.connect
         self._isPreviewFrameHidden = False
 
 
@@ -117,7 +116,10 @@ class MainWindow(QMainWindow):
         self.previewProgressBar.show()
         QApplication.processEvents()
         helper.mkdir(config.tmp)
-        self.savePath = f'{config.tmp}/preview.png'
+        #иногда, если png:
+        # image /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png has alpha channel !
+        #  /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png will output /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview-4x.jpg.png
+        self.savePath = f'{config.tmp}/preview.jpg'
         self.upscaledPath = f'{config.tmp}/preview-4x.jpg'
         self.preview1.save(self.savePath)
 
@@ -143,6 +145,7 @@ class MainWindow(QMainWindow):
     def _onUpscalePreviewComplete(self):
         self.preview2.showUpscaled(self.upscaledPath)
         print('onUpscalePreviewComplete')
+        self._hideTimer.timeout.disconnect()
         self._hideTimer.timeout.connect(self._onHideProgressBarTimeout)
         self._hideTimer.start(1000)
         self.preview2.hideBlackout()
