@@ -113,7 +113,7 @@ class FileCard(QPushButton):
     def _updateMiniature(self):
         height = self.ui.miniature.height()
         width = self.ui.miniature.width()
-        pix = QPixmap(self._imagePath).scaled(width, height, Qt.KeepAspectRatio)
+        pix = QPixmap(self._imagePath).scaled(width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.ui.miniature.setPixmap(pix)
 
     def resizeEvent(self, event):

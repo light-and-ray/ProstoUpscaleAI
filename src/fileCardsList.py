@@ -1,14 +1,16 @@
 from fileCard import FileCard
+from mainWindow import MainWindow
 
 
 class FileCardsList:
 #public:
-    def __init__(self, mainWindow):
+    def __init__(self, mainWindow: MainWindow):
         self._cards : list[FileCard] = []
         self._mainWindow = mainWindow
         self._onStart = None
         self._onCancel = None
         self._selected = None
+        self._mainWindow.expandListButton.clicked.connect(self._expand)
 
 
     def add(self, imagePath):
@@ -56,7 +58,7 @@ class FileCardsList:
             elif self._selected >= index:
                 self._selected -= 1
                 if self._selected < 0:
-                    self._selected = None
+                    self._selected = 0
 
         if self._selected is not None:
             self.select(self._selected, True)
@@ -80,6 +82,20 @@ class FileCardsList:
 
 
 #private:
+
+    def _expand(self):
+        self._mainWindow.expandListButton.clicked.disconnect()
+        self._mainWindow.expandListButton.clicked.connect(self._squeeze)
+        self._mainWindow.expandListButton.setText("Squeeze list")
+        self._mainWindow.hidePreviewFrame()
+
+
+    def _squeeze(self):
+        self._mainWindow.expandListButton.clicked.disconnect()
+        self._mainWindow.expandListButton.clicked.connect(self._expand)
+        self._mainWindow.expandListButton.setText("Expand list")
+        self._mainWindow.showPreviewFrame()
+
 
     def _background(self):
         if self._selected is not None:

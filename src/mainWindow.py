@@ -25,6 +25,9 @@ class MainWindow(QMainWindow):
         self._onCloseCallbacks = []
         self.addOnCloseCallback(self._upscaler.kill)
 
+        self.expandListButton.clicked.connect
+        self._isPreviewFrameHidden = False
+
 
     def initUi(self):
         self.preview1 = self.ui.preview1
@@ -42,6 +45,8 @@ class MainWindow(QMainWindow):
         self.convertAllButton = self.ui.convertAllButton
         self.savingOptionsButton = self.ui.savingOptionsButton
         self.scrollLayout = self.ui.scrollLayout
+        self.expandListButton = self.ui.expandListButton
+        self.previewFrame = self.ui.previewFrame
 
         self.show()
 
@@ -93,6 +98,15 @@ class MainWindow(QMainWindow):
         self._onCloseCallbacks.append(func)
 
 
+    def hidePreviewFrame(self):
+        self.previewFrame.hide()
+        self._isPreviewFrameHidden = True
+
+    def showPreviewFrame(self):
+        self.previewFrame.show()
+        self._isPreviewFrameHidden = False
+
+
 #private:
 
     def _upscalePreview(self):
@@ -133,7 +147,9 @@ class MainWindow(QMainWindow):
         self.preview2.hideBlackout()
 
     def _needUpscalePreview(self):
-        return self._needUpscalePreview_var and self.preview1.imagePath is not None
+        return self._needUpscalePreview_var\
+            and self.preview1.imagePath is not None\
+            and not self._isPreviewFrameHidden
 
 
     def _background(self):
