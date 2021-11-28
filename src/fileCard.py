@@ -15,6 +15,7 @@ class FileCard(QPushButton):
         self.ui = Ui_FileCard()
         self.ui.setupUi(self)
         self.setCheckable(True)
+        self._selected = False
 
         self.startCancelButton = self.ui.startCancelButton
         self.startCancelButton.clicked.connect(self._start)
@@ -53,11 +54,15 @@ class FileCard(QPushButton):
 
 
     def setSelectedColor(self):
-        self.animateClick()
+        if self._selected == False:
+            self._selected = True
+            self.toggle()
 
 
     def setUnselectedColor(self):
-        self.animateClick()
+        if self._selected == True:
+            self._selected = False
+            self.toggle()
 
 
     def getImagePath(self):
@@ -79,9 +84,6 @@ class FileCard(QPushButton):
 
     def mousePressEvent(self, event):
         self._onSelect(self._index)
-        # checked = self.isChecked()
-        # super(FileCard, self).mousePressEvent(event)
-        # self.setChecked(checked)
 
 
     def _remove(self):

@@ -27,9 +27,10 @@ class FileCardsList:
 
     def select(self, index, reselect = False):
         if self._selected is not None:
-            if self._selected == index and not reselect:
-                return
-            self._cards[self._selected].setUnselectedColor()
+            if not reselect:
+                if self._selected == index:
+                    return
+                self._cards[self._selected].setUnselectedColor()
 
         card = self._cards[index]
         card.setSelectedColor()

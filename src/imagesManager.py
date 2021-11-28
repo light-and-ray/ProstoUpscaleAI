@@ -14,7 +14,7 @@ class ImagesManager:
 #public:
     def __init__(self, mainWindow : MainWindow, fileCardsList: FileCardsList):
         self._mainWindow = mainWindow
-        self._mainWindow.addImagesButton.clicked.connect(self._openImages)
+        self._mainWindow.addImagesButton.clicked.connect(self._onClickedButton)
         self._mainWindow.setOnDrop(self._onDrop)
         self._lastDirectory = config.defaultOpenDirectory
 
@@ -50,7 +50,7 @@ class ImagesManager:
         self._mainWindow.scrollToButtom()
 
 
-    def _openImages(self):
+    def _onClickedButton(self):
         path = self._selectImageFromDialog()
         if path == '':
             return
