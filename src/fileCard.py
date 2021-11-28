@@ -6,12 +6,16 @@ from Ui_FileCard import Ui_FileCard
 import helper
 
 
-class FileCard(QFrame):
+class FileCard(QPushButton):
 #public:
     def __init__(self, parent, imagePath, index):
         super(FileCard, self).__init__(parent)
+        self.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred))
+        self.setBaseSize(600, 80)
         self.ui = Ui_FileCard()
         self.ui.setupUi(self)
+        self.setCheckable(True)
+
         self.startCancelButton = self.ui.startCancelButton
         self.startCancelButton.clicked.connect(self._start)
         self.removeButton = self.ui.removeButton
@@ -49,14 +53,11 @@ class FileCard(QFrame):
 
 
     def setSelectedColor(self):
-        pal = QPalette(QApplication.palette())
-        pal.setColor(QPalette.Base, pal.color(QPalette.Background))
-        self.setPalette(pal)
+        self.animateClick()
 
 
     def setUnselectedColor(self):
-        pal = QPalette()
-        self.setPalette(pal)
+        self.animateClick()
 
 
     def getImagePath(self):
@@ -78,6 +79,10 @@ class FileCard(QFrame):
 
     def mousePressEvent(self, event):
         self._onSelect(self._index)
+        # checked = self.isChecked()
+        # super(FileCard, self).mousePressEvent(event)
+        # self.setChecked(checked)
+
 
     def _remove(self):
         self._onRemove(self._index)
