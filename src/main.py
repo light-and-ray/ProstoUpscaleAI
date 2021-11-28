@@ -6,6 +6,7 @@ import sys
 from fileCardsList import FileCardsList
 from mainWindow import MainWindow
 from imagesManager import ImagesManager
+import errorHandling
 import helper, config
 
 
@@ -26,7 +27,7 @@ def main():
         mainWindow._background()
         fileCardsList._background()
         imagesManager._background()
-
+        errorHandling.instance.handle()
 
     backgroundTimer = QTimer()
     backgroundTimer.timeout.connect(background)

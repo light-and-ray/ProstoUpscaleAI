@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 import threading, io
 from subprocess import Popen, PIPE, STDOUT
 
-import helper, config
+import helper, config, errorHandling
 
 class Upscaler():
 #public:
@@ -17,6 +17,7 @@ class Upscaler():
         self._done = False
         self.percents = 0.00
         self.showBlackout = None
+        self.err = 0
 
 
     def run(self, pathIn, pathOut):
@@ -56,6 +57,12 @@ class Upscaler():
                 print(f'[dummyUpscale] {line}', end='')
                 if line.endswith('%\n'):
                     self.percents = float(line[:-2])
+
+                if line.startswith('WARNING: lavapipe is not a conformant vulkan implementation, testing use only.'):
+                    errorHandling.instance.add("Your system doesn't spport Vilkan Api")
+                    self.err = 1
+                    p.kill()
+                    break
 
         self.percents = 100.00
         self._complete = True
