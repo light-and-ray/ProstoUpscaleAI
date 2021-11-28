@@ -47,6 +47,7 @@ class MainWindow(QMainWindow):
         self.scrollLayout = self.ui.scrollLayout
         self.expandListButton = self.ui.expandListButton
         self.previewFrame = self.ui.previewFrame
+        self.scrollArea = self.ui.scrollArea
 
         self.show()
 
@@ -65,8 +66,8 @@ class MainWindow(QMainWindow):
 
 
     def setXY(self, x, y):
-        self.preview1.picture.setXY(x, y)
-        self.preview2.picture.setXY(x, y)
+        self.preview1.setXY(x, y)
+        self.preview2.setXY(x, y)
 
 
     def updateTitle(self, text):

@@ -7,12 +7,12 @@ import helper, config
 
 class PreviewPicture(QGraphicsPixmapItem):
 #public:
-    def __init__(self):
+    def __init__(self, onLastMove):
         super(PreviewPicture, self).__init__()
         self.setSize(0, 0)
         self._sibling = None
         self._onMoveCallback = None
-        self._lastXY = None
+        self._onLastMove = onLastMove
 
 
     def setSibling(self, sibling):
@@ -25,23 +25,17 @@ class PreviewPicture(QGraphicsPixmapItem):
         self._checkBorder()
 
 
+    def updateLastMove(self):
+        self._lastMove = helper.currentTime()
+        self._onLastMove()
+
+
     def setOnMoveCallback(self, func):
         self._onMoveCallback = func
 
     def getLastMove(self):
         return self._lastMove
 
-    def getLastXY(self):
-        return self._lastXY
-
-    def updateLastMove(self):
-        self._lastMove = helper.currentTime()
-        self._lastXY = (self.x(), self.y())
-
-    def setXY(self, x, y):
-        self._lastXY = (x, y)
-        self.setX(x)
-        self.setY(y)
 
 #private:
 

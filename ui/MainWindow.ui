@@ -21,6 +21,9 @@
     <property name="topMargin">
      <number>13</number>
     </property>
+    <property name="rightMargin">
+     <number>13</number>
+    </property>
     <property name="bottomMargin">
      <number>13</number>
     </property>
@@ -46,6 +49,12 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="PreviewWidget" name="preview1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>200</width>
@@ -102,7 +111,7 @@
         <property name="baseSize">
          <size>
           <width>0</width>
-          <height>95</height>
+          <height>80</height>
          </size>
         </property>
         <property name="focusPolicy">
@@ -116,11 +125,14 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>750</width>
+           <width>746</width>
            <height>140</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="rightMargin">
+           <number>9</number>
+          </property>
           <item>
            <layout class="QVBoxLayout" name="scrollLayout">
             <property name="rightMargin">
@@ -218,7 +230,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Convert all</string>
+         <string>Convert All</string>
         </property>
        </widget>
       </item>
@@ -230,7 +242,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Expand list</string>
+         <string>Expand List</string>
         </property>
        </widget>
       </item>

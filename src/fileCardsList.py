@@ -86,19 +86,26 @@ class FileCardsList:
     def _expand(self):
         self._mainWindow.expandListButton.clicked.disconnect()
         self._mainWindow.expandListButton.clicked.connect(self._squeeze)
-        self._mainWindow.expandListButton.setText("Squeeze list")
+        self._mainWindow.expandListButton.setText("Squeeze List")
         self._mainWindow.hidePreviewFrame()
 
 
     def _squeeze(self):
         self._mainWindow.expandListButton.clicked.disconnect()
         self._mainWindow.expandListButton.clicked.connect(self._expand)
-        self._mainWindow.expandListButton.setText("Expand list")
+        self._mainWindow.expandListButton.setText("Expand List")
         self._mainWindow.showPreviewFrame()
+
+
+    def _fitOneElement(self):
+        self._previousHeight = self._mainWindow.scrollArea.height()
+        width = self._mainWindow.scrollArea.width()
+        height = self._cards[0].height()
+        self._mainWindow.scrollArea.setBaseSize(width, height)
 
 
     def _background(self):
         if self._selected is not None:
             card = self._cards[self._selected]
-            card.lastXY = self._mainWindow.preview1.picture.getLastXY()
+            card.lastXY = self._mainWindow.preview1.getLastXY()
 

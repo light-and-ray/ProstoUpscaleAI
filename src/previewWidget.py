@@ -21,8 +21,9 @@ class PreviewWidget(QGraphicsView):
         self._scene = QGraphicsScene(parent=self)
         self._setSceneRectFromSize()
 
+        self._lastXY = None
         self.imagePath = None
-        self.picture = PreviewPicture()
+        self.picture = PreviewPicture(self.updateLastXY)
         self._updatePicBorder()
         self._scene.addItem(self.picture)
 
@@ -37,7 +38,7 @@ class PreviewWidget(QGraphicsView):
 
         self.setScene(self._scene)
 
-        self.picture.updateLastMove()
+        self.updateLastXY()
 
 
     def setPicture(self, path):
@@ -49,7 +50,7 @@ class PreviewWidget(QGraphicsView):
             self.picture.setPixmap(pix)
             self.picture.setX(-pix.width() // 2)
             self.picture.setY(-pix.height() // 2)
-            self.picture.updateLastMove()
+            self.updateLastXY()
         else:
             pix = QPixmap()
             self.picture.setPixmap(pix)
@@ -86,6 +87,19 @@ class PreviewWidget(QGraphicsView):
 
     def hideBlackout(self):
         self.blackout.hide()
+
+
+    def getLastXY(self):
+        return self._lastXY
+
+    def updateLastXY(self):
+        self._lastMove = helper.currentTime()
+        self._lastXY = (-self.picture.x() / self._zoom, -self.picture.y() / self._zoom)
+
+    def setXY(self, x, y):
+        self._lastXY = (x, y)
+        self.picture.setX(-x * self._zoom)
+        self.picture.setY(-y * self._zoom)
 
 #private:
 
