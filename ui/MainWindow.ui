@@ -235,14 +235,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="saveOptionsButton">
+       <widget class="QPushButton" name="savingOptionsButton">
         <property name="font">
          <font>
           <pointsize>11</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Save options</string>
+         <string>Saving Options</string>
         </property>
        </widget>
       </item>

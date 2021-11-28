@@ -40,13 +40,11 @@ class ImagesManager:
 
 
     def _addImages(self, paths):
-        firstIndex = None
+        lastIndex = None
         for path in paths:
             print('add', path)
-            i = self._fileCardsList.add(path)
-            if firstIndex is None:
-                firstIndex = i
-        self._fileCardsList.select(firstIndex)
+            lastIndex = self._fileCardsList.add(path)
+        self._fileCardsList.select(lastIndex)
         self._mainWindow.scrollToButtom()
 
 

@@ -40,7 +40,7 @@ class MainWindow(QMainWindow):
 
         self.addImagesButton = self.ui.addImagesButton
         self.convertAllButton = self.ui.convertAllButton
-        self.saveOptionsButton = self.ui.saveOptionsButton
+        self.savingOptionsButton = self.ui.savingOptionsButton
         self.scrollLayout = self.ui.scrollLayout
 
         self.show()
