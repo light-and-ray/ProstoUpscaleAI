@@ -12,6 +12,7 @@ class UpscaleOptions:
         self.imagePath = imagePath
         self.savePath = savePath
         self.fileName = imagePath.split('/')[-1]
+        self.fileNameWithPathHash = f'{abs(hash(helper.dirOfFile(imagePath)))}-{self.fileName}'
         self.ext = None
         self._updateExt()
         self.preScale = 1.0
@@ -27,6 +28,7 @@ class UpscaleOptions:
     def setImagePath(self, imagePath):
         self.imagePath = imagePath
         self.fileName = imagePath.split('/')[-1]
+        self.fileNameWithPathHash = hash(helper.dirOfFile(imagePath)) + self.fileName
         self._updateExt()
 
     def setSavePath(self, savePath):
@@ -63,23 +65,23 @@ class _Upscaler:
     def __init__(self, options: UpscaleOptions):
         self.fileIn = options.imagePath
         if options.ext not in helper.imgExtantions:
-            self.filePreConverted = f'{config.tmp}/{options.fileName}-preconverted.png'
+            self.filePreConverted = f'{config.tmp}/{options.fileNameWithPathHash}-preconverted.png'
         else:
             self.filePreConverted = self.fileIn
 
         if options.preScale != 1.0:
-            self.fileScaled = f'{config.tmp}/{options.fileName}-preprocessed.png'
+            self.fileScaled = f'{config.tmp}/{options.fileNameWithPathHash}-preprocessed.png'
         else:
             self.fileScaled = self.filePreConverted
 
         if options.denoiseLevel != 0.0:
-            self.fileFullDenoised = f'{config.tmp}/{options.fileName}-fullDenoised.png'
-            self.fileDenoised = f'{config.tmp}/{options.fileName}-denoised.png'
+            self.fileFullDenoised = f'{config.tmp}/{options.fileNameWithPathHash}-fullDenoised.png'
+            self.fileDenoised = f'{config.tmp}/{options.fileNameWithPathHash}-denoised.png'
         else:
             self.fileFullDenoised = None
             self.fileDenoised = self.fileScaled
 
-        self.fileUpscaled = f'{config.tmp}/{options.fileName}-upscaled.png'
+        self.fileUpscaled = f'{config.tmp}/{options.fileNameWithPathHash}-upscaled.png'
 
         if os.path.isdir(options.savePath):
             self.fileOut = f'{options.savePath}/{options.fileName}-prostoUpscaled.{options.saveFormat}'
@@ -126,7 +128,7 @@ class _Upscaler:
 
     def execCmd(self, cmd, logName):
         p = self.popen(cmd)
-        print(f'{logName}]', cmd)
+        print(f'[{logName}]', cmd)
         self.process = p
         text = ''
         for line in p.stdout:
@@ -179,7 +181,7 @@ class _Upscaler:
 
     def save(self):
         self.execCmd([config.convert, '-quality', self.options.saveQuality,
-                self.fileUpscaled, self.fileOut], 'save fileOut error')
+                self.fileUpscaled, self.fileOut], 'save fileOut')
 
 
 
@@ -207,7 +209,7 @@ class UpscaleRunner:
         if pathOut is not None:
             options.setSavePath(pathOut)
 
-        helper.printObj(options)
+        # helper.printObj(options)
         self.init()
         self._upscaler = _Upscaler(options)
         self._thread = threading.Thread(target=self._run)

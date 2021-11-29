@@ -81,6 +81,8 @@ class MainWindow(QMainWindow):
     def setOnDrop(self, func):
         self._onDrop = func
 
+    def setOnPaste(self, func):
+        self._onPaste = func
 
     def addCard(self, card):
         self.scrollLayout.addWidget(card)
@@ -181,11 +183,18 @@ class MainWindow(QMainWindow):
             if timeDiff >= config.TIMEOUT_BEFORE_UPSCALE:
                 self._upscalePreview()
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event : QDragEnterEvent):
         event.accept()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event : QDropEvent):
         self._onDrop(event)
+
+    def keyPressEvent(self, event : QKeyEvent):
+        super(MainWindow, self).keyPressEvent(event)
+        if event.key() == Qt.Key_V and event.modifiers() == Qt.ControlModifier:
+            text = QApplication.clipboard().text()
+            print('Ctrl+V:', text)
+            self._onPaste(text)
 
     def closeEvent(self, event: QCloseEvent):
         for onClose in self._onCloseCallbacks:

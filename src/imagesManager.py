@@ -16,6 +16,7 @@ class ImagesManager:
         self._mainWindow = mainWindow
         self._mainWindow.addImagesButton.clicked.connect(self._onClickedButton)
         self._mainWindow.setOnDrop(self._onDrop)
+        self._mainWindow.setOnPaste(self._onPaste)
         self._lastDirectory = config.defaultOpenDirectory
 
         self._fileCardsList = fileCardsList
@@ -56,11 +57,20 @@ class ImagesManager:
 
 
     def _onDrop(self, event):
-        paths = helper.fileUrlToPath(event.mimeData().text()).split('\n')
+        paths = event.mimeData().text().split('\n')
         paths = filter(lambda x: x != '', map(helper.fileUrlToPath, paths))
         paths = list(paths)
         print('Droped', paths)
         self._addImages(paths)
+
+
+    def _onPaste(self, text):
+        paths = text.split('\n')
+        paths = filter(lambda x: x != '', map(helper.fileUrlToPath, paths))
+        paths = list(paths)
+        print('Pasted', paths)
+        self._addImages(paths)
+
 
 
     def _onStartUpscale(self, index):
