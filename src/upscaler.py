@@ -124,35 +124,35 @@ class _Upscaler:
         return Popen(cmd, encoding=config.ENCODING, stdout=PIPE, stderr=STDOUT)
 
 
-    def execCmd(self, cmd, errPrefix):
+    def execCmd(self, cmd, logName):
         p = self.popen(cmd)
-        print('[execCmd]', cmd)
+        print(f'{logName}]', cmd)
         self.process = p
         text = ''
         for line in p.stdout:
-            print(f'[execCmd] {line}', end='')
+            print(f'[{logName}] {line}', end='')
             text += line
         data = p.communicate()[0]
         if p.returncode not in [0, config.TERMINATED_ERROR_CODE]:
-            self.err = f'{errPrefix} [{p.returncode}]: {text}'
+            self.err = f'{logName} error [{p.returncode}]: {text}'
         self.process = None
 
     def preConvert(self):
-        self.execCmd([config.convert, '-verbose', self.fileIn, self.filePreConverted], 'preconvert error')
+        self.execCmd([config.convert, '-verbose', self.fileIn, self.filePreConverted], 'preConvert')
 
 
     def preScale(self):
         self.execCmd([config.convert, '-verbose', '-resize', f'{self.options.preScale * 100}%',
-                self.filePreConverted, self.fileScaled], 'preScale error')
+                self.filePreConverted, self.fileScaled], 'preScale')
 
 
     def denoise(self):
         self.execCmd([config.convert, '-verbose', '-enhance', self.fileScaled, self.fileFullDenoised],
-            'denoise convert -enhance error')
+            'denoise convert -enhance')
         if self.checkError(): return
         self.execCmd([config.composite, '-blend', self.options.denoiseLevel * 100,
             self.fileFullDenoised, self.fileScaled, self.fileDenoised],
-            'denoise composite -blend error')
+            'denoise composite -blend')
 
 
     def upscale(self):
