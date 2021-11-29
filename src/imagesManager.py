@@ -80,7 +80,7 @@ class ImagesManager:
 
     def _background(self):
         if self._processingCard is not None:
-            per = self._upscaler.percents
+            per = self._upscaler.getPercents()
             if per is not None:
                 self._processingCard.progressBar.setValue(int(100*per))
 

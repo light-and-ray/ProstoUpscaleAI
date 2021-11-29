@@ -29,6 +29,7 @@ class FileCard(QPushButton):
         self._onRemove = None
         self._imagePath = imagePath
         self._upscaleOptions = UpscaleOptions(imagePath, helper.dirOfFile(imagePath))
+        self._upscaleOptions.setDenoiseLevel(0.5)
         self._index = index
 
         self._updateMiniature()

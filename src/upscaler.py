@@ -94,6 +94,7 @@ class _Upscaler:
     def checkError(self):
         if self.err is not None:
             errorHandling.instance.add(self.err)
+            self.err = None
             return True
         return False
 
@@ -127,11 +128,13 @@ class _Upscaler:
         p = self.popen(cmd)
         print('[execCmd]', cmd)
         self.process = p
+        text = ''
         for line in p.stdout:
             print(f'[execCmd] {line}', end='')
+            text += line
         data = p.communicate()[0]
         if p.returncode not in [0, config.TERMINATED_ERROR_CODE]:
-            self.err = f'{errPrefix} [{p.returncode}]: {data}'
+            self.err = f'{errPrefix} [{p.returncode}]: {text}'
         self.process = None
 
     def preConvert(self):
@@ -193,7 +196,6 @@ class UpscaleRunner:
         self._process = None
         self._done = False
         self._upscaler = None
-        self.percents = 0.00
         self.inProcess = None
         self.err = 0
 
