@@ -7,7 +7,7 @@ from mainWindow import MainWindow
 from fileCardsList import FileCardsList
 import helper, config
 
-from upscaler import Upscaler
+from upscaler import UpscaleRunner
 
 
 class ImagesManager:
@@ -20,7 +20,7 @@ class ImagesManager:
 
         self._fileCardsList = fileCardsList
 
-        self._upscaler = Upscaler()
+        self._upscaler = UpscaleRunner()
         self._fileCardsList.setOnStart(self._onStartUpscale)
         self._fileCardsList.setOnCancel(self._onCancelUpscale)
         self._mainWindow.addOnCloseCallback(self._upscaler.kill)

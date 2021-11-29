@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 import helper, config
 
 
-class ErrorHandling:
+class _ErrorHandling:
     def __init__(self):
         self._lastHandleTime = 0
         self._unhandled = []
@@ -25,4 +25,4 @@ class ErrorHandling:
             msg.exec_()
             self._unhandled.remove(error)
 
-instance = ErrorHandling()
+instance = _ErrorHandling()

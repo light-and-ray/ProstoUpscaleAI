@@ -46,3 +46,25 @@ def listDirImages(path: str):
                 res.append(f'{path}/{file}')
     return res
 
+imgExtantions = ['jpg', 'jpeg', 'png', 'webp']
+
+
+def reconnect(signal, newhandler=None, oldhandler=None):
+    try:
+        if oldhandler is not None:
+            while True:
+                signal.disconnect(oldhandler)
+        else:
+            signal.disconnect()
+    except TypeError:
+        pass
+    if newhandler is not None:
+        signal.connect(newhandler)
+
+
+def printObj(obj):
+    for attr in dir(obj):
+        if not attr.startswith('__') and not attr.startswith('set') :
+            val = getattr(obj, attr)
+            print(f'{attr} = {val}')
+

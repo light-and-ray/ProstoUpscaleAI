@@ -1,8 +1,10 @@
 import os, pathlib, time
+from upscaler import UpscaleOptions
 
 TIMEOUT_BEFORE_UPSCALE = 900
 BLACKOUT_OPACITY = 0.6
 MOVE_SCALE = 3
+ENCODING = 'utf-8'
 
 defaultOpenDirectory = os.environ['HOME']
 
@@ -11,6 +13,7 @@ tmp = f'{root}/tmp'
 bin = f'{root}/bin'
 realsr = f'{bin}/realsr-ncnn-vulkan'
 convert = f'{bin}/convert'
+composite = f'{bin}/composite'
 modelJpeg = f'{bin}/realsr-ncnn-vulkan-models/models-DF2K_JPEG'
 model = f'{bin}/realsr-ncnn-vulkan-models/models-DF2K'
 

@@ -24,6 +24,7 @@ class PreviewWidget(QGraphicsView):
         self._lastXY = None
         self.imagePath = None
         self.picture = PreviewPicture(self.updateLastXY)
+        self.picture.updateLastMove()
         self._updatePicBorder()
         self._scene.addItem(self.picture)
 

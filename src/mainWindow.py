@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 from Ui_MainWindow import Ui_MainWindow
-from upscaler import Upscaler
+from upscaler import UpscaleRunner, UpscaleOptions
 import helper, config
 
 
@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.initUi()
 
-        self._upscaler = Upscaler()
+        self._upscaler = UpscaleRunner()
         self._hideTimer = QTimer()
 
         self._needUpscalePreview_var = True
@@ -118,12 +118,15 @@ class MainWindow(QMainWindow):
         helper.mkdir(config.tmp)
         #иногда, если png:
         # image /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png has alpha channel !
-        #  /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png will output /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview-4x.jpg.png
+        #  /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png will output
+        # /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview-4x.jpg.png
         self.savePath = f'{config.tmp}/preview.jpg'
         self.upscaledPath = f'{config.tmp}/preview-4x.jpg'
         self.preview1.save(self.savePath)
 
-        self._upscaler.run(self.savePath, self.upscaledPath)
+        options = UpscaleOptions(self.savePath, self.upscaledPath)
+        options.setDenoiseLevel(0.5)
+        self._upscaler.run(options)
 
         def onMove():
             self.previewProgressBar.hide()
@@ -138,15 +141,14 @@ class MainWindow(QMainWindow):
     def _onHideProgressBarTimeout(self):
         print("onHideTimeout")
         self.previewProgressBar.hide()
-        self._upscaler.percents = None
+        self._upscaler.setPercents(None)
         self._hideTimer.stop()
 
 
     def _onUpscalePreviewComplete(self):
         self.preview2.showUpscaled(self.upscaledPath)
         print('onUpscalePreviewComplete')
-        self._hideTimer.timeout.disconnect()
-        self._hideTimer.timeout.connect(self._onHideProgressBarTimeout)
+        helper.reconnect(self._hideTimer.timeout, self._onHideProgressBarTimeout)
         self._hideTimer.start(1000)
         self.preview2.hideBlackout()
 
@@ -157,19 +159,20 @@ class MainWindow(QMainWindow):
 
 
     def _background(self):
-        per = self._upscaler.percents
+        per = self._upscaler.getPercents()
         if per is not None:
             self.previewProgressBar.setValue(int(100 * per))
 
-        if self._upscaler.showBlackout is not None:
-            if self._upscaler.showBlackout:
+            if self._upscaler.complete():
+                self._onUpscalePreviewComplete()
+
+        if self._upscaler.inProcess is not None:
+            if self._upscaler.inProcess:
                 self.preview2.showBlackout()
             else:
                 self.preview2.hideBlackout()
-            self._upscaler.showBlackout = None
+            self._upscaler.inProcess = None
 
-        if self._upscaler.complete():
-            self._onUpscalePreviewComplete()
 
         if self._needUpscalePreview():
             timeDiff = helper.currentTime() - self.preview1.picture.getLastMove()
