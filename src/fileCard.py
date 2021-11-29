@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 from Ui_FileCard import Ui_FileCard
-import helper
+from upscaler import UpscaleOptions
+import helper, config
 
 
 class FileCard(QPushButton):
@@ -27,6 +28,7 @@ class FileCard(QPushButton):
         self._onCancel = None
         self._onRemove = None
         self._imagePath = imagePath
+        self._upscaleOptions = UpscaleOptions(imagePath, helper.dirOfFile(imagePath))
         self._index = index
 
         self._updateMiniature()
@@ -67,6 +69,9 @@ class FileCard(QPushButton):
 
     def getImagePath(self):
         return self._imagePath
+
+    def getUpscaleOptions(self):
+        return self._upscaleOptions
 
 
     def setIndex(self, index):

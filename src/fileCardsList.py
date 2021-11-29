@@ -37,7 +37,7 @@ class FileCardsList:
         card = self._cards[index]
         card.setSelectedColor()
         self._selected = index
-        self._mainWindow.setPicture(card.getImagePath())
+        self._mainWindow.setPicture(card.getImagePath(), card.getUpscaleOptions())
 
         if card.lastXY is not None:
             self._mainWindow.setXY(*card.lastXY)
@@ -63,7 +63,7 @@ class FileCardsList:
         if self._selected is not None:
             self.select(self._selected, True)
         else:
-            self._mainWindow.setPicture(None)
+            self._mainWindow.setPicture(None, None)
 
 
     def setOnStart(self, func):

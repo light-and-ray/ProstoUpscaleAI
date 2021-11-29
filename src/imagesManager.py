@@ -67,7 +67,7 @@ class ImagesManager:
         print('_onStartUpscale')
         card = self._fileCardsList.at(index)
         pathIn = card.getImagePath()
-        self._upscaler.run(pathIn, pathIn + '_upscaled_4x.jpg')
+        self._upscaler.run(card.getUpscaleOptions(), pathIn, pathIn + '_upscaled_4x.jpg')
         self._processingCard = card
 
 

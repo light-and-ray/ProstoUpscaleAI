@@ -1,7 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import threading, os
+import threading, os, copy
 from subprocess import Popen, PIPE, STDOUT
 
 import helper, config, errorHandling
@@ -130,7 +130,7 @@ class _Upscaler:
         for line in p.stdout:
             print(f'[execCmd] {line}', end='')
         data = p.communicate()[0]
-        if p.returncode != 0:
+        if p.returncode not in [0, config.TERMINATED_ERROR_CODE]:
             self.err = f'{errPrefix} [{p.returncode}]: {data}'
         self.process = None
 
@@ -198,7 +198,13 @@ class UpscaleRunner:
         self.err = 0
 
 
-    def run(self, options: UpscaleOptions):
+    def run(self, options: UpscaleOptions, pathIn = None, pathOut = None):
+        opt = copy.copy(options)
+        if pathIn is not None:
+            options.setImagePath(pathIn)
+        if pathOut is not None:
+            options.setSavePath(pathOut)
+
         helper.printObj(options)
         self.init()
         self._upscaler = _Upscaler(options)
@@ -215,6 +221,7 @@ class UpscaleRunner:
             self._upscaler.process = None
             self._thread.join()
             print('killed')
+            self.init()
 
 
     def complete(self):

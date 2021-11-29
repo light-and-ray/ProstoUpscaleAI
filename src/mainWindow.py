@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         self._needUpscalePreview_var = True
         self.setAcceptDrops(True)
         self._picture = None
+        self._pictureOptions = None
 
         self._onCloseCallbacks = []
         self.addOnCloseCallback(self._upscaler.kill)
@@ -51,8 +52,9 @@ class MainWindow(QMainWindow):
         self.show()
 
 
-    def setPicture(self, path):
+    def setPicture(self, path, options):
         self._picture = path
+        self._pictureOptions = options
         self.preview1.setPicture(self._picture)
         self.preview2.setPicture(self._picture)
         self._needUpscalePreview_var = True

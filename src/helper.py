@@ -1,7 +1,7 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import os, time
+import os, time, pathlib
 from subprocess import Popen, PIPE, STDOUT
 
 import config
@@ -68,3 +68,6 @@ def printObj(obj):
             val = getattr(obj, attr)
             print(f'{attr} = {val}')
 
+
+def dirOfFile(filePath):
+    return pathlib.Path(filePath).parent.resolve()
