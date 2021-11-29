@@ -20,7 +20,7 @@ class _ErrorHandling:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
             msg.setText("Error")
-            msg.setInformativeText(error)
+            msg.setInformativeText(str(error))
             msg.setWindowTitle("Error")
             msg.exec_()
             self._unhandled.remove(error)

@@ -89,35 +89,40 @@ class _Upscaler:
             self.fileOut = options.savePath
 
         self.options = options
-        self.err = None
+        self.errorMsg = None
         self.process = None
         self.percents = None
 
     def checkError(self):
-        if self.err is not None:
-            errorHandling.instance.add(self.err)
-            self.err = None
+        if self.errorMsg is not None:
+            errorHandling.instance.add(self.errorMsg)
+            self.errorMsg = None
             return True
         return False
 
 
     def run(self):
-        if self.options.ext not in helper.imgExtantions:
-            self.preConvert()
+        try:
+            if self.options.ext not in helper.imgExtantions:
+                self.preConvert()
+                if self.checkError(): return
+
+            if self.options.preScale != 1.0:
+                self.preScale()
+                if self.checkError(): return
+
+            if self.options.denoiseLevel != 0.0:
+                self.denoise()
+                if self.checkError(): return
+
+            self.upscale()
             if self.checkError(): return
 
-        if self.options.preScale != 1.0:
-            self.preScale()
+            self.save()
             if self.checkError(): return
-
-        if self.options.denoiseLevel != 0.0:
-            self.denoise()
-            if self.checkError(): return
-
-        self.upscale()
-        if self.checkError(): return
-
-        self.save()
+        except BaseException as error:
+            self.errorMsg = f'[upscaler] An exception occurred: {error}'
+            self.checkError()
 
 
     @staticmethod
@@ -136,7 +141,7 @@ class _Upscaler:
             text += line
         data = p.communicate()[0]
         if p.returncode not in [0, config.TERMINATED_ERROR_CODE]:
-            self.err = f'{logName} error [{p.returncode}]: {text}'
+            self.errorMsg = f'{logName} error [{p.returncode}]: {text}'
         self.process = None
 
     def preConvert(self):
@@ -171,8 +176,7 @@ class _Upscaler:
                 self.percents = float(line[:-2])
 
             if line.startswith('WARNING: lavapipe is not a conformant vulkan implementation, testing use only.'):
-                errorHandling.instance.add("Your system doesn't spport Vilkan Api")
-                self.err = 1
+                self.errorMsg = "Your system doesn't spport Vilkan Api"
                 p.kill()
                 break
 
