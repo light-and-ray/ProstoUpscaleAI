@@ -9,12 +9,8 @@ import helper, config, errorHandling
 
 class UpscaleOptions:
     def __init__(self, imagePath : str, savePath : str):
-        self.imagePath = imagePath
+        self.setImagePath(imagePath)
         self.savePath = savePath
-        self.fileName = imagePath.split('/')[-1]
-        self.fileNameWithPathHash = f'{abs(hash(helper.dirOfFile(imagePath)))}-{self.fileName}'
-        self.ext = None
-        self._updateExt()
         self.preScale = 1.0
         # self.postprocessScale = 1.0
         self.denoiseLevel = 0.0
@@ -28,7 +24,7 @@ class UpscaleOptions:
     def setImagePath(self, imagePath):
         self.imagePath = imagePath
         self.fileName = imagePath.split('/')[-1]
-        self.fileNameWithPathHash = hash(helper.dirOfFile(imagePath)) + self.fileName
+        self.fileNameWithPathHash = f'{abs(hash(helper.dirOfFile(imagePath)))}-{self.fileName}'
         self._updateExt()
 
     def setSavePath(self, savePath):
@@ -90,13 +86,16 @@ class _Upscaler:
 
         self.options = options
         self.errorMsg = None
+        self.errorCode = None
         self.process = None
         self.percents = None
 
     def checkError(self):
         if self.errorMsg is not None:
-            errorHandling.instance.add(self.errorMsg)
+            if self.errorCode not in config.TERMINATED_ERROR_CODES:
+                errorHandling.instance.add(self.errorMsg)
             self.errorMsg = None
+            self.errorCode = None
             return True
         return False
 
@@ -140,8 +139,9 @@ class _Upscaler:
             print(f'[{logName}] {line}', end='')
             text += line
         data = p.communicate()[0]
-        if p.returncode not in [0, config.TERMINATED_ERROR_CODE]:
+        if p.returncode not in [0]:
             self.errorMsg = f'{logName} error [{p.returncode}]: {text}'
+            self.errorCode = p.returncode
         self.process = None
 
     def preConvert(self):

@@ -72,7 +72,7 @@ class PreviewWidget(QGraphicsView):
 
 
     def showUpscaled(self, path):
-        pix = QPixmap(path)
+        pix = QPixmap(path).scaledToHeight(self.height(), Qt.SmoothTransformation)
         self.upscaled.setPixmap(pix)
         self.upscaled.show()
         self.picture.setOnMoveCallback(lambda: self.upscaled.hide())

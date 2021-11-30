@@ -128,9 +128,7 @@ class MainWindow(QMainWindow):
         self.upscaledPath = f'{config.tmp}/preview-4x.jpg'
         self.preview1.save(self.savePath)
 
-        options = UpscaleOptions(self.savePath, self.upscaledPath)
-        options.setDenoiseLevel(0.5)
-        self._upscaler.run(options)
+        self._upscaler.run(self._pictureOptions, self.savePath, self.upscaledPath)
 
         def onMove():
             self.previewProgressBar.hide()
