@@ -90,11 +90,13 @@ class _Upscaler:
         self.process = None
         self.percents = None
         self._errorSuppression = False
+        self._toDelete = []
+
 
     def checkError(self):
         if self._errorSuppression:
             return True
-            
+
         if self.errorMsg is not None:
             if self.errorCode not in config.TERMINATED_ERROR_CODES:
                 errorHandling.instance.add(self.errorMsg)
@@ -124,6 +126,7 @@ class _Upscaler:
             self.save()
             if self.checkError(): return
             print('saved')
+            self.clean()
         except BaseException as error:
             self.errorMsg = f'[upscaler] An exception occurred: {error}'
             self.checkError()
@@ -151,20 +154,24 @@ class _Upscaler:
 
     def preConvert(self):
         self.execCmd([config.convert, '-verbose', self.fileIn, self.filePreConverted], 'preConvert')
+        self._toDelete.append(self.filePreConverted)
 
 
     def preScale(self):
         self.execCmd([config.convert, '-verbose', '-resize', f'{self.options.preScale * 100}%',
                 self.filePreConverted, self.fileScaled], 'preScale')
+        self._toDelete.append(self.fileScaled)
 
 
     def denoise(self):
         self.execCmd([config.convert, '-verbose', '-enhance', self.fileScaled, self.fileFullDenoised],
             'denoise convert -enhance')
+        self._toDelete.append(self.fileFullDenoised)
         if self.checkError(): return
         self.execCmd([config.composite, '-blend', self.options.denoiseLevel * 100,
             self.fileFullDenoised, self.fileScaled, self.fileDenoised],
             'denoise composite -blend')
+        self._toDelete.append(self.fileDenoised)
 
 
     def upscale(self):
@@ -174,6 +181,7 @@ class _Upscaler:
         p = self.popen([config.realsr, x, '-t', self.options.realsrT,
                 '-m', model, '-i', self.fileDenoised,
                 '-o', self.fileUpscaled])
+        self._toDelete.append(self.fileUpscaled)
         self.process = p
         for line in p.stdout:
             print(f'[upscale] {line}', end='')
@@ -191,6 +199,10 @@ class _Upscaler:
     def save(self):
         self.execCmd([config.convert, '-quality', self.options.saveQuality,
                 self.fileUpscaled, self.fileOut], 'save fileOut')
+
+    def clean(self):
+        if len(self._toDelete) != 0:
+            self.execCmd(['rm', *self._toDelete], 'clean')
 
     def setErrorSuppression(self, flag):
         self._errorSuppression = flag

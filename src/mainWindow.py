@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
 
         self._onCloseCallbacks = []
         self.addOnCloseCallback(self._upscaler.kill)
-        self.addOnCloseCallback(lambda: helper.execCmd(f'rm -rf "{config.tmp}"'))
+        self.addOnCloseCallback(lambda: helper.execCmd(f'rm -d "{config.tmp}"'))
 
         self._isPreviewFrameHidden = False
 
