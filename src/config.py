@@ -9,7 +9,7 @@ TERMINATED_ERROR_CODES = [-15, 15]
 defaultOpenDirectory = os.environ['HOME']
 
 root = pathlib.Path(__file__).parent.parent.resolve()
-tmp = f'{root}/tmp'
+tmp = f'/tmp/ProstoUpscaleAI'
 bin = f'{root}/bin'
 realsr = f'{bin}/realsr-ncnn-vulkan'
 convert = f'{bin}/convert'

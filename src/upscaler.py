@@ -89,8 +89,12 @@ class _Upscaler:
         self.errorCode = None
         self.process = None
         self.percents = None
+        self._errorSuppression = False
 
     def checkError(self):
+        if self._errorSuppression:
+            return True
+            
         if self.errorMsg is not None:
             if self.errorCode not in config.TERMINATED_ERROR_CODES:
                 errorHandling.instance.add(self.errorMsg)
@@ -119,6 +123,7 @@ class _Upscaler:
 
             self.save()
             if self.checkError(): return
+            print('saved')
         except BaseException as error:
             self.errorMsg = f'[upscaler] An exception occurred: {error}'
             self.checkError()
@@ -187,17 +192,21 @@ class _Upscaler:
         self.execCmd([config.convert, '-quality', self.options.saveQuality,
                 self.fileUpscaled, self.fileOut], 'save fileOut')
 
+    def setErrorSuppression(self, flag):
+        self._errorSuppression = flag
 
 
 
 
 
-class UpscaleRunner:
+
+class Upscaler:
 #public:
-    def __init__(self):
+    def __init__(self, onFinish):
+        self._onFinish = onFinish
         self.init()
 
-    def init(self):
+    def init(self, ):
         self._complete = False
         self._process = None
         self._done = False
@@ -224,6 +233,7 @@ class UpscaleRunner:
         if not self._done and self._upscaler is not None and self._upscaler.process is not None:
             print('killing')
             self._done = True
+            self._upscaler.setErrorSuppression(True)
             self._upscaler.process.terminate()
             # self._process.kill()
             self._upscaler.process = None

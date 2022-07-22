@@ -32,6 +32,7 @@ def main():
     backgroundTimer = QTimer()
     backgroundTimer.timeout.connect(background)
     backgroundTimer.start(50)
+    helper.mkdir(config.tmp)
 
     mainWindow.showMaximized()
     sys.exit(application.exec())

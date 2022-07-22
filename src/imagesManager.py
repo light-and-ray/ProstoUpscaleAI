@@ -5,9 +5,10 @@ import os
 
 from mainWindow import MainWindow
 from fileCardsList import FileCardsList
+from fileCard import FileCard
 import helper, config
 
-from upscaler import UpscaleRunner
+from upscaler import Upscaler
 
 
 class ImagesManager:
@@ -21,11 +22,15 @@ class ImagesManager:
 
         self._fileCardsList = fileCardsList
 
-        self._upscaler = UpscaleRunner()
+        self._upscaler = Upscaler(None) #on finish
         self._fileCardsList.setOnStart(self._onStartUpscale)
         self._fileCardsList.setOnCancel(self._onCancelUpscale)
+        self._fileCardsList.setOnComplete(self._onCompleteUpscale)
+        self._fileCardsList.setOnRemove(self._onRemoveCard)
+
         self._mainWindow.addOnCloseCallback(self._upscaler.kill)
         self._processingCard = None
+        self._queue : list[FileCard] = []
 
 
 #private:
@@ -75,17 +80,54 @@ class ImagesManager:
 
     def _onStartUpscale(self, index):
         print('_onStartUpscale')
+        self._queue.append(self._fileCardsList.at(index))
+        if len(self._queue) == 1:
+            self._upscale(index)
+
+
+    def _upscale(self, index):
         card = self._fileCardsList.at(index)
+        self._processingCard = card
         pathIn = card.getImagePath()
         self._upscaler.run(card.getUpscaleOptions(), pathIn, pathIn + '_upscaled_4x.jpg')
-        self._processingCard = card
 
 
     def _onCancelUpscale(self, index):
         print('_onCancelUpscale')
-        self._upscaler.kill()
-        self._processingCard.progressBar.setValue(0)
+        card = self._fileCardsList.at(index)
         self._processingCard = None
+
+        self._upscaler.kill()
+
+        card.progressBar.setValue(0)
+        if self._queue[0].index() == index:
+            self._nextQueue(index)
+        else:
+            self._removeFromQueue(index)
+
+
+    def _onCompleteUpscale(self, index):
+        print('_onCompleteUpscale')
+        self._processingCard = None
+        self._nextQueue(index)
+
+
+    def _onRemoveCard(self, index):
+        self._removeFromQueue(index)
+
+
+    def _nextQueue(self, index):
+        self._removeFromQueue(index)
+        if len(self._queue) == 0:
+            return
+        self._upscale(self._queue[0].index())
+
+
+    def _removeFromQueue(self, index):
+        for element in self._queue:
+            if element.index() == index:
+                self._queue.remove(element)
+                return
 
 
     def _background(self):
@@ -96,5 +138,4 @@ class ImagesManager:
 
             if self._upscaler.complete():
                 self._processingCard.markComplete()
-                self._processingCard = None
 

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
 from Ui_MainWindow import Ui_MainWindow
-from upscaler import UpscaleRunner, UpscaleOptions
+from upscaler import Upscaler, UpscaleOptions
 import helper, config
 
 
@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.initUi()
 
-        self._upscaler = UpscaleRunner()
+        self._upscaler = Upscaler(None) #on finish
         self._hideTimer = QTimer()
 
         self._needUpscalePreview_var = True
@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
 
         self._onCloseCallbacks = []
         self.addOnCloseCallback(self._upscaler.kill)
+        self.addOnCloseCallback(lambda: helper.execCmd(f'rm -rf "{config.tmp}"'))
 
         self._isPreviewFrameHidden = False
 
@@ -119,7 +120,6 @@ class MainWindow(QMainWindow):
         self.previewProgressBar.setValue(0)
         self.previewProgressBar.show()
         QApplication.processEvents()
-        helper.mkdir(config.tmp)
         #иногда, если png:
         # image /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png has alpha channel !
         #  /home/neon/workspace/ProstoUpscaleAI/ProstoUpscaleAI/tmp/preview.png will output

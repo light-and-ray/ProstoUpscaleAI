@@ -26,10 +26,11 @@ class FileCard(QPushButton):
         self._onSelect = None
         self._onStart = None
         self._onCancel = None
+        self._onComplete = None
         self._onRemove = None
         self._imagePath = imagePath
         self._upscaleOptions = UpscaleOptions(imagePath, helper.dirOfFile(imagePath))
-        self._upscaleOptions.setDenoiseLevel(0.5)
+        self._upscaleOptions.setDenoiseLevel(0.4)
         self._upscaleOptions.setPreScale(0.7)
         self._index = index
 
@@ -52,6 +53,9 @@ class FileCard(QPushButton):
 
     def setOnCancel(self, func):
         self._onCancel = func
+
+    def setOnComplete(self, func):
+        self._onComplete = func
 
     def setOnRemove(self, func):
         self._onRemove = func
@@ -79,9 +83,13 @@ class FileCard(QPushButton):
     def setIndex(self, index):
         self._index = index
 
+    def index(self):
+        return self._index
+
 
     def markComplete(self):
         self._setReadyState()
+        self._onComplete(self._index)
 
 
 #private:

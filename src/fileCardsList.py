@@ -9,6 +9,8 @@ class FileCardsList:
         self._mainWindow = mainWindow
         self._onStart = None
         self._onCancel = None
+        self._onComplete = None
+        self._onRemove = None
         self._selected = None
         self._mainWindow.expandListButton.clicked.connect(self._expand)
 
@@ -18,6 +20,7 @@ class FileCardsList:
         card = FileCard(self._mainWindow.ui.scrollAreaWidgetContents, imagePath, index)
         card.setOnStart(self._onStart)
         card.setOnCancel(self._onCancel)
+        card.setOnComplete(self._onComplete)
 
         card.setOnRemove(self.remove)
         card.setOnSelect(self.select)
@@ -45,6 +48,8 @@ class FileCardsList:
 
     def remove(self, index):
         print('remove', index)
+        if self._onRemove is not None:
+            self._onRemove(index)
         card = self._cards[index]
         self._mainWindow.removeCard(card)
         self._cards.remove(card)
@@ -69,9 +74,14 @@ class FileCardsList:
     def setOnStart(self, func):
         self._onStart = func
 
-
     def setOnCancel(self, func):
         self._onCancel = func
+
+    def setOnComplete(self, func):
+        self._onComplete = func
+
+    def setOnRemove(self, func):
+        self._onRemove = func
 
 
     def getSelectedCard(self) -> FileCard:
