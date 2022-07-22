@@ -15,7 +15,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.initUi()
 
-        self._upscaler = Upscaler(None) #on finish
+        self._upscaler = Upscaler()
         self._hideTimer = QTimer()
 
         self._needUpscalePreview_var = True

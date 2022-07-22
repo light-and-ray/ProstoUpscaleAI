@@ -214,11 +214,10 @@ class _Upscaler:
 
 class Upscaler:
 #public:
-    def __init__(self, onFinish):
-        self._onFinish = onFinish
+    def __init__(self):
         self.init()
 
-    def init(self, ):
+    def init(self):
         self._complete = False
         self._process = None
         self._done = False
@@ -227,8 +226,8 @@ class Upscaler:
         self.err = 0
 
 
-    def run(self, options: UpscaleOptions, pathIn = None, pathOut = None):
-        opt = copy.copy(options)
+    def run(self, options_: UpscaleOptions, pathIn = None, pathOut = None):
+        options = copy.copy(options_)
         if pathIn is not None:
             options.setImagePath(pathIn)
         if pathOut is not None:
