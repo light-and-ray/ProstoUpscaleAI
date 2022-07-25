@@ -89,12 +89,12 @@ class _Upscaler:
         self.errorCode = None
         self.process = None
         self.percents = None
-        self._errorSuppression = False
-        self._toDelete = []
+        self.killed = False
+        self.toDelete = []
 
 
     def checkError(self):
-        if self._errorSuppression:
+        if self.killed:
             return True
 
         if self.errorMsg is not None:
@@ -154,24 +154,24 @@ class _Upscaler:
 
     def preConvert(self):
         self.execCmd([config.convert, '-verbose', self.fileIn, self.filePreConverted], 'preConvert')
-        self._toDelete.append(self.filePreConverted)
+        self.toDelete.append(self.filePreConverted)
 
 
     def preScale(self):
         self.execCmd([config.convert, '-verbose', '-resize', f'{self.options.preScale * 100}%',
                 self.filePreConverted, self.fileScaled], 'preScale')
-        self._toDelete.append(self.fileScaled)
+        self.toDelete.append(self.fileScaled)
 
 
     def denoise(self):
         self.execCmd([config.convert, '-verbose', '-enhance', self.fileScaled, self.fileFullDenoised],
             'denoise convert -enhance')
-        self._toDelete.append(self.fileFullDenoised)
+        self.toDelete.append(self.fileFullDenoised)
         if self.checkError(): return
         self.execCmd([config.composite, '-blend', self.options.denoiseLevel * 100,
             self.fileFullDenoised, self.fileScaled, self.fileDenoised],
             'denoise composite -blend')
-        self._toDelete.append(self.fileDenoised)
+        self.toDelete.append(self.fileDenoised)
 
 
     def upscale(self):
@@ -181,7 +181,7 @@ class _Upscaler:
         p = self.popen([config.realsr, x, '-t', self.options.realsrT,
                 '-m', model, '-i', self.fileDenoised,
                 '-o', self.fileUpscaled])
-        self._toDelete.append(self.fileUpscaled)
+        self.toDelete.append(self.fileUpscaled)
         self.process = p
         for line in p.stdout:
             print(f'[upscale] {line}', end='')
@@ -196,16 +196,20 @@ class _Upscaler:
         self.percents = 100.00
         self.process = None
 
+
     def save(self):
         self.execCmd([config.convert, '-quality', self.options.saveQuality,
                 self.fileUpscaled, self.fileOut], 'save fileOut')
 
     def clean(self):
-        if len(self._toDelete) != 0:
-            self.execCmd(['rm', *self._toDelete], 'clean')
+        if len(self.toDelete) != 0:
+            self.execCmd(['rm', *self.toDelete], 'clean')
 
-    def setErrorSuppression(self, flag):
-        self._errorSuppression = flag
+    def kill(self):
+        self.killed = True
+        self.process.terminate()
+        self.process = None
+        self.clean()
 
 
 
@@ -244,10 +248,7 @@ class Upscaler:
         if not self._done and self._upscaler is not None and self._upscaler.process is not None:
             print('killing')
             self._done = True
-            self._upscaler.setErrorSuppression(True)
-            self._upscaler.process.terminate()
-            # self._process.kill()
-            self._upscaler.process = None
+            self._upscaler.kill()
             self._thread.join()
             print('killed')
             self.init()

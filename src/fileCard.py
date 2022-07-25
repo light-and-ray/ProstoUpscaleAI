@@ -99,6 +99,9 @@ class FileCard(QPushButton):
 
     def mousePressEvent(self, event):
         self._onSelect(self._index)
+    
+    def keyPressEvent(self, event):
+        self._onSelect(self._index)
 
 
     def _remove(self):

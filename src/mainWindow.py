@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
 
         self._onCloseCallbacks = []
         self.addOnCloseCallback(self._upscaler.kill)
+        self.addOnCloseCallback(lambda: helper.execCmd(f'rm {config.tmp}/*preview*'))
         self.addOnCloseCallback(lambda: helper.execCmd(f'rm -d "{config.tmp}"'))
 
         self._isPreviewFrameHidden = False
@@ -195,7 +196,13 @@ class MainWindow(QMainWindow):
             self._onPaste(text)
 
     def closeEvent(self, event: QCloseEvent):
-        for onClose in self._onCloseCallbacks:
-            onClose()
-        event.accept()
+        reply = QMessageBox.question(self, 'Quit', 'Are you sure you want to quit?',
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                
+        if reply == QMessageBox.Yes:
+            for onClose in self._onCloseCallbacks:
+                onClose()
+            event.accept()
+        else:
+            event.ignore()
 
