@@ -1,6 +1,6 @@
 src/__pycache__/**
 .vscode
 .directory
-*.jpg
+src/testImages/*.jpg
 src/Ui_*
 tmp/**

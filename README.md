@@ -8,3 +8,5 @@ srmd: https://github.com/nihui/srmd-ncnn-vulkan
 
 
 imgemagick (crop preview, denoise and downscale): https://imagemagick.org/
+
+![](/readme/img1.jpg)
